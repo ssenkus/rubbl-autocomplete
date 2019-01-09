@@ -3919,1661 +3919,1689 @@
     }
   };
   e.collectionHeader = i;
-}(App), function(e) {
-  var t = {
-    isYScroll: !1,
-    init: function() {
-      var t = e.config.lastAccessUI;
-      this.accessUI = { component: t, modal: t + 'Modal' }, e.header.setup(), this.buildDropdowns();
-    },
-    createCookie: function(e, t, i) {
-      var n = '';
-      if (i) {
-        var r = new Date;
-        r.setTime(r.getTime() + 1e3 * i), n = '; expires=' + r.toGMTString();
-      } else n = '';
-      document.cookie = e + '=' + t + n + '; path=/';
-    },
-    getCookie: function(e) {
-      for (var t = e + '=', i = document.cookie.split(';'), n = 0; n < i.length; n++) {
-        for (var r = i[n]; " " == r.charAt(0);) r = r.substring(1, r.length);
-        if (0 == r.indexOf(t)) return r.substring(t.length, r.length);
-      }
-      return !1;
-    },
-    removeCookie: function(e) {this.createCookie(e, '', -1);},
-    setUI: function(e, t) {this.createCookie(e, t, 2592e3);},
-    setPageElements: function() {e.$window = $(window), e.$document = $(document), e.$html = $('html'), e.$body = $('body'), e.$modal = e.$body.find('.ComponentManager'), e.$app = e.$html.find('.App'), e.$header = e.$app.find('.Header');},
-    buildDropdowns: function() {
-      var t = e.$window;
-      e.$document.on('keyup.header', function(e) {27 === e.keyCode && t.trigger('onDropdownClosed');}), t.on('onDropdownClosed', function() {$('.dropdown, .menuButton').removeClass('active'), $('html').removeClass('isActiveMenu'), $('.navItem .btn').removeClass('active');}), e.$app.on('click', '.moduleOverlay.canClose', function(e) {return t.trigger('onDropdownClosed'), !1;}), e.$app.find('.dropdown').on('click', '.dropNavItem', function(e) {t.trigger('onDropdownClosed');});
-    },
-    setDropdown: function(e, t) {$('.dropdown').removeClass('active'), $('html').removeClass('isActiveMenu'), e.addClass('active');},
-    scrollMoreHelper: function() {
-      var t = e.browser.getScrollPosition(), i = e.$body, n = i.find('.scrollMore');
-      this.getCookie('dspn_ui_scrollmore') || (0 == t ? (n.length ? n.addClass('active') : i.append('<div class="scrollMore active">Scroll to See More</div>'), e.$window.on('scroll.page_ui', _.throttle(function() {e.browser.showScrollMore(n, e.browser.getScrollPosition());}, 380)), i.on('click.page_ui', '.scrollMore', function(t) {return $(this).remove(), e.page.createCookie('dspn_ui_scrollmore', 'hide', 31536e3), !1;})) : (e.$window.off('scroll.page_ui'), n.remove(), this.removeCookie('dspn_ui_scrollmore')));
-    }
-  };
-  e.page = t;
-}(App), function(e) {
-  var t = {
-    onReady: function() {
-      var t = e.$window;
-      e.browser.cacheDimensions(), t.on('onBrowserDimensionsChanged', function() {e.browser.cacheDimensions(), e.columnManager.updateNumColumns();}), t.on('resize.page', _.debounce(function() {t.trigger('onBrowserDimensionsChanged');}, 50));
-    },
-    cacheDimensions: function() {
-      var t = e.browser;
-      t.height = this.getWindowHeight(), t.width = t.pageWidth = this.getWindowWidth(), t.pageHeight = this.getPageHeight();
-    },
-    getScrollPosition: function() {return e.isIE ? document.documentElement.scrollTop : window.pageYOffset;},
-    scrollToTop: function(e) {e.animate({ scrollTop: 0 }, 300, 'easeOutQuart');},
-    showScrollTop: function(t, i, n) {
-      var r = i.find('.scrollTopTrigger');
-      r.length || (i.append('<div class="scrollTopTrigger"></div>'), i.on('click.page', '.scrollTopTrigger', function() {e.browser.scrollToTop(t);})), n > 400 ? r.addClass('active') : r.removeClass('active');
-    },
-    showScrollMore: function(t, i) {i > 70 && (e.$body.find('.scrollMore').removeClass('active'), e.$window.off('scroll.page_ui'), e.page.createCookie('dspn_ui_scrollmore', 'hide', 365));},
-    setPageLock: function() {$.scrollLock(!0);},
-    releasePageLock: function() {$.scrollLock(!1), e.$html.removeClass('fixifyHeader');}
-  };
-  $.scrollLock = function() {
-    'use strict';
+}(App),
+    function(e) {
 
-    function e() {
-      var e = n.attr('style'), t = [], i = {};
-      e && (t = e.split(/;\s/), $.each(t, function(e) {
-        if (e) {
-          var t = e.split(/\s:\s/);
-          t.length < 2 || (i[t[0]] = t[1]);
-        }
-      }), $.extend(s, i));
-    }
-
-    function t() {
-      var t = {};
-      r || (o = { scrollTop: $(window).scrollTop() }, e(), $.extend(t, a, { top: -o.scrollTop + 'px' }), n.css(t), $(window).scrollTop(0), r = !0);
-    }
-
-    function i() {r && (n.attr('style', $('<x>').css(s).attr('style') || ''), $(window).scrollTop(o.scrollTop), r = !1);}
-
-    var n = $('html'), r = !1, o = { scrollTop: $(window).scrollTop() }, s = {}, a = { position: 'fixed' };
-    return e(), function(e) {arguments.length ? e ? t() : i() : r ? i() : t();};
-  }();
-  e.viewport = function() {this.top = e.$window.scrollTop(), this.height = e.$window.height(), this.bottom = this.top + this.height, this.width = e.$window.width();}, $.extend(e.browser, t);
-}(App), function(e) {
-  var t = e.config.gaAccountNumber, i = { VISITOR: 1, SESSION: 2, PAGE: 3 }, n = function() {
-    var e = document.createElement('script');
-    window._gaq = window._gaq || [], e.type = 'text/javascript', e.async = !0, e.src = 'https://ssl.google-analytics.com/ga.js', (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(e);
-  }, r = function(i) {
-    var n = e.config.BASE_URL.replace('https://', '');
-    window._gaq.push(['_setAccount', t]), !0 === e.config.DEBUG && (n = 'none'), window._gaq.push(['_setDomainName', n]), window._gaq.push(i);
-  }, o = function(e) {e = e ? 'logged in' : 'logged out', window._gaq.push(['_setCustomVar', 1, 'is_logged_in', e, i.SESSION]);}, s = function() {
-    var t = window.innerWidth || document.body.clientWidth, i = window.innerHeight || document.body.clientHeight;
-    t = 100 * Math.round(t / 100), i = 100 * Math.round(i / 100), e.analytics.trackGAEvent('Viewport', 'Size', t + 'x' + i), e.analytics.trackGAEvent('Viewport', 'Width', t + 'x' + i, t), e.analytics.trackGAEvent('Viewport', 'Height', t + 'x' + i, i);
-  }, a = function() {
-    var t = document.documentElement;
-    if (t) {
-      var i = t.getAttribute('data-an');
-      e.analytics.group = l(i);
-    }
-  }, l = function(e) {return e = e.split('|'), { SUBGROUP: e[0], PAGE: e[1], INDEX: e[2] };};
-  e.analytics = {
-    group: !1, setup: function() {n(), a(), o(e.config.isLoggedIn), s();}, getQueryStringParams: function(e) {
-      '?' === (e = e || window.location.search)[0] && (e = e.substring(1));
-      for (var t, i = /\+/g, n = /([^&=]+)=?([^&]*)/g, r = function(e) {return decodeURIComponent(e.replace(i, ' '));}, o = {}; t = n.exec(e);) o[r(t[1])] = r(t[2]);
-      return o;
-    }, getTrackGAPageviewUrl: function(t, i) {
-      var n = e.analytics.getQueryStringParams(i).q;
-      return n && (t += '?' + $.param({ q: n })), t;
-    }, trackGAPageview: function(t, n) {
-      var o = window.location.pathname, s = e.analytics.group.SUBGROUP, a = e.analytics.group.PAGE, c = e.analytics.group.INDEX;
-      t && (s = (t = l(t)).SUBGROUP, a = t.PAGE, c = t.INDEX), n && (o += n), r(['_setCustomVar', 2, 'page_name', a, i.PAGE]), r(['_setPageGroup', c, s]), r(['_trackPageview', e.analytics.getTrackGAPageviewUrl(o, window.location.search)]);
-    }, trackGAEvent: function(e, t, i, n) {r(['_trackEvent', e, t, i, n]);}, setReferringModal: function() {return Modal.primaryModal ? Modal.primaryModal.toLowerCase() + '_modal' : 'page';}
-  };
-}(App), function(e) {
-  jQuery.expr[':'].Contains = function(e, t, i) {return (e.textContent || e.innerText || '').toUpperCase().indexOf(i[3].toUpperCase()) >= 0;}, e.search = function() {
-    var t, i, n, o, s, a = e.$header, l = e.$window, c = a.find('.searchForm'), d = a.find('.field'), u = 0, p = [], h = [], f = !1, m = a.find('.searchSuggestions'), v = 'saves', y = !1, w = !1,
-        x = [], C = [], T = function(t, i) {
-          var n = i && i.specialCode ? i.specialCode : t.which, r = 1 === n, o = 91 === n || t.ctrlKey || t.metaKey, s = n >= 65 && n <= 90 || n >= 48 && n <= 57 || r;
-          (r || 13 === n || !e.component.activeComponent && !e.$app.find('input, textarea').not(d).is(':visible')) && (y && !w || o || s && (d.focus(), y = !0, j(r), w ? a.addClass('fieldHasFocus') : a.removeClass('fieldHasFocus')), y && (13 === n ? (t.preventDefault(), k(), d.trigger('onSearchSubmit')) : 27 === n ? w ? Z() : d.trigger('blur') : 8 === n ? z(n) : 37 === n || (38 === n ? E() : 39 === n ? k() : 40 === n ? S() : 9 === n || 51 === n || w || z(n))));
-        }, k = function() {m.find('.selected').length && d.val(m.find('.selected a').text());}, S = function() {
-          m.find('.suggestedTerm');
-          var e, t = m.find('.suggestedTerm').first(), i = m.find('.selected');
-          e = i.next('.suggestedTerm').length ? i.next('.suggestedTerm') : t, i.removeClass('selected'), e.addClass('selected');
-        }, E = function() {
-          m.find('.suggestedTerm'), m.find('.suggestedTerm').first();
-          var e, t = m.find('.selected');
-          e = t.prev('.suggestedTerm').length ? t.prev('.suggestedTerm') : e, t.removeClass('selected'), e.addClass('selected');
-        }, I = function(e, t) {t && e.push(t), u = (p = e).length;}, A = function() {
-          var e = c.width(), t = 0;
-          a.find('.searchTokenWrapper').each(function() {t += Math.ceil($(this)[0].getBoundingClientRect().width || $(this).outerWidth(!0));}), u > 0 && d.parents('.background').addClass('hasTokens'), d.css('width', e - t + 'px');
-        }, D = function() {d.prop('placeholder', '');}, P = function() {0 === u && d.prop('placeholder', d.attr('data-text'));}, M = function(e, t, i, n) {
-          var r = 'word';
-          return '' !== $.trim(e) && ('#' === e[0] && /(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i.test(e) && (r = 'color', e = N(e)), e = e.toLowerCase(), e = { term: e, type: t, filter: r, index: i, id: n });
-        }, L = function(e) {
-          var t = he(e.replace('#', ''));
-          return (Math.round(299 * t[0]) + Math.round(587 * t[1]) + Math.round(114 * t[2])) / 1e3 >= 128 ? 'dark' : '';
-        }, O = function(e, t, i, n, r) {
-          var o = 'searchTokenItem searchTokenWrapper ' + t;
-          return 'color' === t && L(e), r = ' data-id="' + r + '"', '<li class="' + o + '"' + r + ' data-position="' + n + '" data-type="' + i + '"><div class="searchToken"' + ('color' === t ? ' style="background-color:' + e + '"' : '') + '><span class="tokenName">' + e + '</span><span class="removeToken"><em></em></span></div></li>';
-        }, N = function(e) {return 3 === (e = e.replace('#', '')).length && (e = e[0] + e[0] + e[1] + e[1] + e[2] + e[2]), '#' + e;}, j = function(e) {
-          if (u > 0) {
-            for (var i = d.val(), n = [], r = 0; r < u; r += 1) {
-              var o = p[r];
-              if (o) {
-                var s;
-                s = w && o.term_updated ? o.term_updated : o.term, n.push(s);
-              }
-            }
-            a.find('.searchTokenWrapper').remove(), '' === i && (i = n.join(' ') + (e ? '' : ' '), d.val(i)), t = i, A(), D();
+      var t = {
+        isYScroll: !1,
+        init: function() {
+          var t = e.config.lastAccessUI;
+          this.accessUI = { component: t, modal: t + 'Modal' }, e.header.setup(), this.buildDropdowns();
+        },
+        createCookie: function(e, t, i) {
+          var n = '';
+          if (i) {
+            var r = new Date;
+            r.setTime(r.getTime() + 1e3 * i), n = '; expires=' + r.toGMTString();
+          } else n = '';
+          document.cookie = e + '=' + t + n + '; path=/';
+        },
+        getCookie: function(e) {
+          for (var t = e + '=', i = document.cookie.split(';'), n = 0; n < i.length; n++) {
+            for (var r = i[n]; " " == r.charAt(0);) r = r.substring(1, r.length);
+            if (0 == r.indexOf(t)) return r.substring(t.length, r.length);
           }
-        }, F = function() {a.find('.searchSuggestions').removeClass('active');}, H = function(e) {
-          var t = a.find('.searchSuggestions');
-          t.find('.suggestionTray').html(''), t.removeClass('showSuggestions');
-        }, R = function(e) {
-          if (null === e || '' === e) return !1;
-          var t = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', '\'': '&#039;' };
-          return (e = e.toString()).replace(/[&<>"']/g, function(e) {return t[e];});
-        }, z = function(t) {
-          var i = m.find('.suggestionTray'), n = 'search_autocomplete';
-          m.addClass('active'), 1 !== t && setTimeout(function() {
-            var r = d.val();
-            '' !== r ? r.length > 0 && (clearTimeout(f), m.addClass('showSuggestions'), f = setTimeout(function() {
-              $.ajax({
-                cache: !0,
-                url: '/resource/',
-                type: 'POST',
-                data: { search_suggestions: 1, query: encodeURIComponent(r), request_token: e.config.requestToken },
-                dataType: 'json',
-                error: function(t) {e.analytics.trackGAEvent(n, 'error', t.responseText);},
-                success: function(t) {
-                  if (1 === t.status) {
-                    for (var o = t.suggestions, s = o.length, a = '', l = r, c = r.length, d = 0; d < s; d += 1) {
-                      var u = o[d], p = '<b>' + u.substr(0, c) + '</b>' + u.substr(c);
-                      a += '<li class="suggestedTerm"><a><span class="suggestedTermName" data-query="' + R(JSON.stringify({
-                        entered_query: l,
-                        selected_query: u,
-                        filter_type: 'autocomplete'
-                      })) + '">' + p + '</span></a></li>';
+          return !1;
+        },
+        removeCookie: function(e) {this.createCookie(e, '', -1);},
+        setUI: function(e, t) {this.createCookie(e, t, 2592e3);},
+        setPageElements: function() {e.$window = $(window), e.$document = $(document), e.$html = $('html'), e.$body = $('body'), e.$modal = e.$body.find('.ComponentManager'), e.$app = e.$html.find('.App'), e.$header = e.$app.find('.Header');},
+        buildDropdowns: function() {
+          var t = e.$window;
+          e.$document.on('keyup.header', function(e) {27 === e.keyCode && t.trigger('onDropdownClosed');}), t.on('onDropdownClosed', function() {$('.dropdown, .menuButton').removeClass('active'), $('html').removeClass('isActiveMenu'), $('.navItem .btn').removeClass('active');}), e.$app.on('click', '.moduleOverlay.canClose', function(e) {return t.trigger('onDropdownClosed'), !1;}), e.$app.find('.dropdown').on('click', '.dropNavItem', function(e) {t.trigger('onDropdownClosed');});
+        },
+        setDropdown: function(e, t) {$('.dropdown').removeClass('active'), $('html').removeClass('isActiveMenu'), e.addClass('active');},
+        scrollMoreHelper: function() {
+          var t = e.browser.getScrollPosition(), i = e.$body, n = i.find('.scrollMore');
+          this.getCookie('dspn_ui_scrollmore') || (0 == t ? (n.length ? n.addClass('active') : i.append('<div class="scrollMore active">Scroll to See More</div>'), e.$window.on('scroll.page_ui', _.throttle(function() {e.browser.showScrollMore(n, e.browser.getScrollPosition());}, 380)), i.on('click.page_ui', '.scrollMore', function(t) {return $(this).remove(), e.page.createCookie('dspn_ui_scrollmore', 'hide', 31536e3), !1;})) : (e.$window.off('scroll.page_ui'), n.remove(), this.removeCookie('dspn_ui_scrollmore')));
+        }
+      };
+      e.page = t;
+    }(App),
+    function(e) {
+      var t = {
+        onReady: function() {
+          var t = e.$window;
+          e.browser.cacheDimensions(), t.on('onBrowserDimensionsChanged', function() {e.browser.cacheDimensions(), e.columnManager.updateNumColumns();}), t.on('resize.page', _.debounce(function() {t.trigger('onBrowserDimensionsChanged');}, 50));
+        },
+        cacheDimensions: function() {
+          var t = e.browser;
+          t.height = this.getWindowHeight(), t.width = t.pageWidth = this.getWindowWidth(), t.pageHeight = this.getPageHeight();
+        },
+        getScrollPosition: function() {return e.isIE ? document.documentElement.scrollTop : window.pageYOffset;},
+        scrollToTop: function(e) {e.animate({ scrollTop: 0 }, 300, 'easeOutQuart');},
+        showScrollTop: function(t, i, n) {
+          var r = i.find('.scrollTopTrigger');
+          r.length || (i.append('<div class="scrollTopTrigger"></div>'), i.on('click.page', '.scrollTopTrigger', function() {e.browser.scrollToTop(t);})), n > 400 ? r.addClass('active') : r.removeClass('active');
+        },
+        showScrollMore: function(t, i) {i > 70 && (e.$body.find('.scrollMore').removeClass('active'), e.$window.off('scroll.page_ui'), e.page.createCookie('dspn_ui_scrollmore', 'hide', 365));},
+        setPageLock: function() {$.scrollLock(!0);},
+        releasePageLock: function() {$.scrollLock(!1), e.$html.removeClass('fixifyHeader');}
+      };
+      $.scrollLock = function() {
+        'use strict';
+
+        function e() {
+          var e = n.attr('style'), t = [], i = {};
+          e && (t = e.split(/;\s/), $.each(t, function(e) {
+            if (e) {
+              var t = e.split(/\s:\s/);
+              t.length < 2 || (i[t[0]] = t[1]);
+            }
+          }), $.extend(s, i));
+        }
+
+        function t() {
+          var t = {};
+          r || (o = { scrollTop: $(window).scrollTop() }, e(), $.extend(t, a, { top: -o.scrollTop + 'px' }), n.css(t), $(window).scrollTop(0), r = !0);
+        }
+
+        function i() {r && (n.attr('style', $('<x>').css(s).attr('style') || ''), $(window).scrollTop(o.scrollTop), r = !1);}
+
+        var n = $('html'), r = !1, o = { scrollTop: $(window).scrollTop() }, s = {}, a = { position: 'fixed' };
+        return e(), function(e) {arguments.length ? e ? t() : i() : r ? i() : t();};
+      }();
+      e.viewport = function() {this.top = e.$window.scrollTop(), this.height = e.$window.height(), this.bottom = this.top + this.height, this.width = e.$window.width();}, $.extend(e.browser, t);
+    }(App),
+    function(e) {
+      var t = e.config.gaAccountNumber, i = { VISITOR: 1, SESSION: 2, PAGE: 3 }, n = function() {
+        var e = document.createElement('script');
+        window._gaq = window._gaq || [], e.type = 'text/javascript', e.async = !0, e.src = 'https://ssl.google-analytics.com/ga.js', (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(e);
+      }, r = function(i) {
+        var n = e.config.BASE_URL.replace('https://', '');
+        window._gaq.push(['_setAccount', t]), !0 === e.config.DEBUG && (n = 'none'), window._gaq.push(['_setDomainName', n]), window._gaq.push(i);
+      }, o = function(e) {e = e ? 'logged in' : 'logged out', window._gaq.push(['_setCustomVar', 1, 'is_logged_in', e, i.SESSION]);}, s = function() {
+        var t = window.innerWidth || document.body.clientWidth, i = window.innerHeight || document.body.clientHeight;
+        t = 100 * Math.round(t / 100), i = 100 * Math.round(i / 100), e.analytics.trackGAEvent('Viewport', 'Size', t + 'x' + i), e.analytics.trackGAEvent('Viewport', 'Width', t + 'x' + i, t), e.analytics.trackGAEvent('Viewport', 'Height', t + 'x' + i, i);
+      }, a = function() {
+        var t = document.documentElement;
+        if (t) {
+          var i = t.getAttribute('data-an');
+          e.analytics.group = l(i);
+        }
+      }, l = function(e) {return e = e.split('|'), { SUBGROUP: e[0], PAGE: e[1], INDEX: e[2] };};
+      e.analytics = {
+        group: !1, setup: function() {n(), a(), o(e.config.isLoggedIn), s();}, getQueryStringParams: function(e) {
+          '?' === (e = e || window.location.search)[0] && (e = e.substring(1));
+          for (var t, i = /\+/g, n = /([^&=]+)=?([^&]*)/g, r = function(e) {return decodeURIComponent(e.replace(i, ' '));}, o = {}; t = n.exec(e);) o[r(t[1])] = r(t[2]);
+          return o;
+        }, getTrackGAPageviewUrl: function(t, i) {
+          var n = e.analytics.getQueryStringParams(i).q;
+          return n && (t += '?' + $.param({ q: n })), t;
+        }, trackGAPageview: function(t, n) {
+          var o = window.location.pathname, s = e.analytics.group.SUBGROUP, a = e.analytics.group.PAGE, c = e.analytics.group.INDEX;
+          t && (s = (t = l(t)).SUBGROUP, a = t.PAGE, c = t.INDEX), n && (o += n), r(['_setCustomVar', 2, 'page_name', a, i.PAGE]), r(['_setPageGroup', c, s]), r(['_trackPageview', e.analytics.getTrackGAPageviewUrl(o, window.location.search)]);
+        }, trackGAEvent: function(e, t, i, n) {r(['_trackEvent', e, t, i, n]);}, setReferringModal: function() {return Modal.primaryModal ? Modal.primaryModal.toLowerCase() + '_modal' : 'page';}
+      };
+    }(App),
+    function(e) {
+      jQuery.expr[':'].Contains = function(e, t, i) {return (e.textContent || e.innerText || '').toUpperCase().indexOf(i[3].toUpperCase()) >= 0;}, e.search = function() {
+        var t, i, n, o, s, a = e.$header, l = e.$window, c = a.find('.searchForm'), d = a.find('.field'), u = 0, p = [], h = [], f = !1, m = a.find('.searchSuggestions'), v = 'saves', y = !1, w = !1,
+            x = [], C = [], T = function(t, i) {
+              var n = i && i.specialCode ? i.specialCode : t.which, r = 1 === n, o = 91 === n || t.ctrlKey || t.metaKey, s = n >= 65 && n <= 90 || n >= 48 && n <= 57 || r;
+              (r || 13 === n || !e.component.activeComponent && !e.$app.find('input, textarea').not(d).is(':visible')) && (y && !w || o || s && (d.focus(), y = !0, j(r), w ? a.addClass('fieldHasFocus') : a.removeClass('fieldHasFocus')), y && (13 === n ? (t.preventDefault(), k(), d.trigger('onSearchSubmit')) : 27 === n ? w ? Z() : d.trigger('blur') : 8 === n ? z(n) : 37 === n || (38 === n ? E() : 39 === n ? k() : 40 === n ? S() : 9 === n || 51 === n || w || z(n))));
+            }, k = function() {m.find('.selected').length && d.val(m.find('.selected a').text());}, S = function() {
+              m.find('.suggestedTerm');
+              var e, t = m.find('.suggestedTerm').first(), i = m.find('.selected');
+              e = i.next('.suggestedTerm').length ? i.next('.suggestedTerm') : t, i.removeClass('selected'), e.addClass('selected');
+            }, E = function() {
+              m.find('.suggestedTerm'), m.find('.suggestedTerm').first();
+              var e, t = m.find('.selected');
+              e = t.prev('.suggestedTerm').length ? t.prev('.suggestedTerm') : e, t.removeClass('selected'), e.addClass('selected');
+            }, I = function(e, t) {t && e.push(t), u = (p = e).length;}, A = function() {
+              var e = c.width(), t = 0;
+              a.find('.searchTokenWrapper').each(function() {t += Math.ceil($(this)[0].getBoundingClientRect().width || $(this).outerWidth(!0));}), u > 0 && d.parents('.background').addClass('hasTokens'), d.css('width', e - t + 'px');
+            }, D = function() {d.prop('placeholder', '');}, P = function() {0 === u && d.prop('placeholder', d.attr('data-text'));}, M = function(e, t, i, n) {
+              var r = 'word';
+              return '' !== $.trim(e) && ('#' === e[0] && /(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i.test(e) && (r = 'color', e = N(e)), e = e.toLowerCase(), e = {
+                term: e,
+                type: t,
+                filter: r,
+                index: i,
+                id: n
+              });
+            }, L = function(e) {
+              var t = he(e.replace('#', ''));
+              return (Math.round(299 * t[0]) + Math.round(587 * t[1]) + Math.round(114 * t[2])) / 1e3 >= 128 ? 'dark' : '';
+            }, O = function(e, t, i, n, r) {
+              var o = 'searchTokenItem searchTokenWrapper ' + t;
+              return 'color' === t && L(e), r = ' data-id="' + r + '"', '<li class="' + o + '"' + r + ' data-position="' + n + '" data-type="' + i + '"><div class="searchToken"' + ('color' === t ? ' style="background-color:' + e + '"' : '') + '><span class="tokenName">' + e + '</span><span class="removeToken"><em></em></span></div></li>';
+            }, N = function(e) {return 3 === (e = e.replace('#', '')).length && (e = e[0] + e[0] + e[1] + e[1] + e[2] + e[2]), '#' + e;}, j = function(e) {
+              if (u > 0) {
+                for (var i = d.val(), n = [], r = 0; r < u; r += 1) {
+                  var o = p[r];
+                  if (o) {
+                    var s;
+                    s = w && o.term_updated ? o.term_updated : o.term, n.push(s);
+                  }
+                }
+                a.find('.searchTokenWrapper').remove(), '' === i && (i = n.join(' ') + (e ? '' : ' '), d.val(i)), t = i, A(), D();
+              }
+            }, F = function() {a.find('.searchSuggestions').removeClass('active');}, H = function(e) {
+              var t = a.find('.searchSuggestions');
+              t.find('.suggestionTray').html(''), t.removeClass('showSuggestions');
+            }, R = function(e) {
+              if (null === e || '' === e) return !1;
+              var t = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', '\'': '&#039;' };
+              return (e = e.toString()).replace(/[&<>"']/g, function(e) {return t[e];});
+            }, z = function(t) {
+              var i = m.find('.suggestionTray'), n = 'search_autocomplete';
+              m.addClass('active'), 1 !== t && setTimeout(function() {
+                var r = d.val();
+                '' !== r ? r.length > 0 && (clearTimeout(f), m.addClass('showSuggestions'), f = setTimeout(function() {
+                  $.ajax({
+                    cache: !0,
+                    url: '/resource/',
+                    type: 'POST',
+                    data: { search_suggestions: 1, query: encodeURIComponent(r), request_token: e.config.requestToken },
+                    dataType: 'json',
+                    error: function(t) {e.analytics.trackGAEvent(n, 'error', t.responseText);},
+                    success: function(t) {
+                      if (1 === t.status) {
+                        for (var o = t.suggestions, s = o.length, a = '', l = r, c = r.length, d = 0; d < s; d += 1) {
+                          var u = o[d], p = '<b>' + u.substr(0, c) + '</b>' + u.substr(c);
+                          a += '<li class="suggestedTerm"><a><span class="suggestedTermName" data-query="' + R(JSON.stringify({
+                            entered_query: l,
+                            selected_query: u,
+                            filter_type: 'autocomplete'
+                          })) + '">' + p + '</span></a></li>';
+                        }
+                        i.html(a), totalSuggestions = i.find('li').length || 0, i.css('height', 30 * totalSuggestions + 'px'), e.analytics.trackGAEvent(n, 'success');
+                      } else e.analytics.trackGAEvent(n, 'failed', t.error);
                     }
-                    i.html(a), totalSuggestions = i.find('li').length || 0, i.css('height', 30 * totalSuggestions + 'px'), e.analytics.trackGAEvent(n, 'success');
-                  } else e.analytics.trackGAEvent(n, 'failed', t.error);
+                  });
+                }, 200)) : H(t);
+              }, 1);
+            }, q = function() {
+              var e = 'saves', t = window.location.href;
+              return -1 !== t.indexOf('/search/saves/') ? e = 'saves' : -1 !== t.indexOf('/search/collections/') ? e = 'collections' : -1 !== t.indexOf('/search/people/') && (e = 'people'), e;
+            }, W = function() {
+              var e = p;
+              if (w) {
+                var t = [], i = X($.trim(d.val()));
+                for (var n in e) t.push(e[n].term);
+                if ('' !== i.join('') && !_.isEqual(t, i)) {
+                  var r = [];
+                  e = [];
+                  for (var o = 0; o < i.length; o += 1) {
+                    var s = i[o];
+                    if (s && '' !== s) {
+                      var a = _.filter(p, function(e) {return e.term === s;});
+                      if (a.length > 0) l = a[0]; else {
+                        var l = M(s, 'typed', o, B());
+                        l.submitted = 0;
+                      }
+                      s = l.term, 'color' === l.filter && -1 !== r.indexOf(s) || (e.push(l), r.push(s));
+                    }
+                  }
+                }
+              } else e = _.filter(p, function(e) {return e && 1 === e.submitted;});
+              U(e), w && (J(), te(h));
+            }, B = function() {
+              for (var e = function() {return Math.floor(900 * Math.random() + 100);}, t = e(); C.indexOf(t) > -1;) t = e();
+              return C.push(t), t;
+            }, G = function(e) {
+              var t = '';
+              if (e) {
+                for (var i = e.term_meta, n = i.length, r = 0; r < n; r += 1) {
+                  var o = i[r];
+                  t += O(o.term, o.filter, o.type, r, o.id);
+                }
+                I(i);
+              }
+              d.val(''), '' !== t && (c.find('.searchTokenWrapper').remove(), c.find('.searchTray').prepend(t), e.q), A();
+            }, U = function(e) {
+              var t = '', i = e.length;
+              if (i > 0) for (var n = 0; n < i; n += 1) {
+                var r = e[n];
+                r && (t += O(r.term, r.filter, r.type, r.index, r.id));
+              }
+              d.val(''), '' !== t && (c.find('.searchTokenWrapper').remove(), c.find('.searchTray').prepend(t)), I(e), A();
+            }, X = function(e) {
+              var t,
+                  i = ['and', 'that', 'but', 'or', 'as', 'if', 'when', 'than', 'because', 'while', 'where', 'after', 'so', 'though', 'since', 'until', 'whether', 'before', 'although', 'nor', 'like', 'once', 'unless', 'now', 'except', 'the', 'a', 'an', 'san', 'for', 'in', 'with'],
+                  n = [], r = [];
+              (t = (e = $.trim(decodeURIComponent(e))).split(/\s+/)).find(function(e) {return $.inArray(e.toLowerCase(), i) > -1;}) && (t = [e]);
+              for (var o = 0; o < t.length; o += 1) {
+                var s = t[o];
+                '#' === s[0] && /(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i.test(s) ? r.push(s) : n.push(s);
+              }
+              return t = n.concat(r);
+            }, Y = function(e) {
+              var t = '';
+              return 'typed' === e.type ? t += e.term + '|' + e.type + '|' + e.filter + '|' + e.index : 'tag' === e.type ? t += e.term + '|' + e.type + '|' + e.filter + '|' + e.index : 'autocomplete' === e.type ? t += e.term + '|' + e.type + '|' + e.filter + '|' + e.index : 'guide' === e.type ? t += e.term + '|' + e.type + '|' + e.filter + '|' + e.index : 'spectrum' === e.type && (t += e.term + '|' + e.type + '|' + e.filter + '|' + e.index), t;
+            }, V = function(e, t) {
+              var i = [];
+              for (var n in e) if (e.hasOwnProperty(n)) {
+                var r = 'term_meta' === t ? t + '[]' : t, o = e[n];
+                i.push('object' == typeof o ? V(o, r) : encodeURIComponent(r) + '=' + encodeURIComponent(o));
+              }
+              return i.join('&');
+            }, Q = function(e) {
+              if ('' === (e = decodeURI(e))) return !1;
+              for (var t = [], i = e.replace('?', '').split('&'), n = function(e, t) {
+                if (-1 !== e.indexOf('|')) {
+                  if (e = e.split('|'), 'term_meta' === a) return {
+                    term: e[0],
+                    type: e[1],
+                    filter: e[2],
+                    index: e[3],
+                    submitted: 1,
+                    id: B()
+                  };
+                  if ('add_refine' === a) return { action: 'add_refine', term: e[0], type: 'guide', filter: e[2], index: e[3], submitted: 1 };
+                  if ('remove_refine' === a) return { action: 'remove_refine', term: e[0], type: 'guide', filter: e[2], index: e[3], submitted: 1 };
+                }
+                return e;
+              }, r = i.length, o = 0; o < r; o += 1) {
+                var s = i[o].split('='), a = decodeURIComponent(s[0]), l = $.trim(decodeURIComponent(s[1]));
+                if ('term_meta[]' === a) {
+                  a = a.substring(0, a.length - 2);
+                  var c = n(l);
+                  '' !== c && (void 0 === t[a] ? t[a] = new Array(c) : t[a].push(c));
+                } else 'add_refine' === a || 'remove_refine' === a ? t.action = n(l) : t[a] = n(l);
+              }
+              if (t.qa || (t.qa = 'tag'), !t.term_meta && t.q) {
+                var d = [];
+                for (e = t.q.split(' '), o = 0; o < e.length; o += 1) {
+                  var u = M(e[o], 'tag', o, e[o].id);
+                  u.submitted = 1, u.id = B(), d.push(u);
+                }
+                t.term_meta = d;
+              }
+              return t;
+            }, K = function() {
+              if (!w) {
+                var t = a.find('.headerContainer');
+                y = !0, w = !0, l.trigger('onHeaderDropdownClosed'), a.find('.colorSearchTrigger').addClass('active'), e.$html.addClass('fixifyHeader'), e.browser.setPageLock(), e.$body.addClass('noScroll'), n = e.browser.getWindowWidth(), o = e.browser.height - (e.$html.hasClass('freeze') ? 107 : 138), 0 === a.find('.colorSearch').length && t.append('<div class="colorSearch"><div class="controls"><div class="instructions">Select up to five colors</div><button type="button" class="submitTrigger"><span>Search</span></button><button type="button" class="closeTrigger canClose grey"><em></em></button></div><div class="colorSearchContainer"><div class="closeable"></div><div class="spectrumRestriction"></div><canvas class="colorSpectrum"></canvas></div></div>'), s = t.find('.colorSearchContainer'), ee(), t.find('.colorSearch').addClass('active');
+              }
+            },
+            Z = function() {e.$body.removeClass('noScroll'), e.$html.removeClass('fixifyHeader'), e.browser.releasePageLock(), a.find('.colorSearchTrigger').removeClass('active'), a.find('.colorSearch').removeClass('active'), l.off('.color'), a.off('.color'), interact('.colorDrop').unset(), J(), y = !1, w = !1, W();},
+            J = function() {s.find('.colorDrop').remove();}, ee = function() {
+              var e = a.find('.colorSpectrum'), t = e[0], r = t.getContext('2d'), s = Math.ceil(.5 * o), l = o - s, c = o, d = r.createLinearGradient(0, 0, 0, s), u = r.createLinearGradient(0, l, 0, c),
+                  p = new Image;
+              this.SaturationDict = { startY: 0, endY: s, stops: [0, .08, .2, .38, .63, .78, .91, 1], opacity: [1, .89, .69, .35, .18, .06, 0] }, this.BrightnessDict = {
+                startY: l,
+                endY: c,
+                stops: [0, .088, .184, .28, .405, .683, .897],
+                opacity: [0, .012, .039, .102, .239, .69, 1]
+              }, i = e, t.width = n, t.height = o, p.onload = function() {
+                r.drawImage(this, 0, 0, n, o);
+                var e = r.getImageData(0, 0, n, o).data, t = Math.round(n / 210 * 5);
+                h = [];
+                for (var i = 0; i < n; ++i) {
+                  var a = 4 * (n + i), c = fe(e[a], e[a + 1], e[a + 2]);
+                  h.push(c[0]);
+                }
+                h.slice(t, h.length - t), d.addColorStop(0, 'hsla(0,0%,100%,1)'), d.addColorStop(.08, 'hsla(0,0%,100%,1)'), d.addColorStop(.2, 'hsla(0,0%,100%,0.89)'), d.addColorStop(.38, 'hsla(0,0%,100%,0.69)'), d.addColorStop(.63, 'hsla(0,0%,100%,0.35)'), d.addColorStop(.78, 'hsla(0,0%,100%,0.18)'), d.addColorStop(.91, 'hsla(0,0%,100%,0.06)'), d.addColorStop(1, 'hsla(0,0%,100%,0)'), r.fillStyle = d, r.fillRect(0, 0, n, s), u.addColorStop(0, 'rgba(0, 0, 0, 0.000)'), u.addColorStop(.088, 'rgba(0, 0, 0, 0.012)'), u.addColorStop(.184, 'rgba(0, 0, 0, 0.039)'), u.addColorStop(.28, 'rgba(0, 0, 0, 0.102)'), u.addColorStop(.405, 'rgba(0, 0, 0, 0.239)'), u.addColorStop(.683, 'rgba(0, 0, 0, 0.690)'), u.addColorStop(.897, 'rgba(0, 0, 0, 1.000)'), r.fillStyle = u, r.fillRect(0, l, n, s), ie(h), le();
+              }, p.src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAANIAAAABCAIAAAAkUWeUAAAAxElEQVR4AXWRB64rQQjAzNZ//5u+9EzjAwpS6siyvH3RiO68rwFLssKWNnbCyb9nZ7z7iXxJvjZYkhkmOjSkQY0oEeZE7vCEuJXbkPvg3t3eHlJG2HuyrmadqoXObUxNjbkzwSI5bbIlbzNn5OGzk/WJmEoX2kybHq5BMYu7CHcL3N4e7sKTk2pIGBrakC42wzJYh3szCN636BdPuyQ5hjzGWJQlvGpZ9CZ6ZVzQC+MUHNGj2zm49ZDnzee484rekIXX9R83Jo4RLxbUQgAAAABJRU5ErkJggg==';
+            }, te = function(e) {
+              for (var t = 0; t < u; t += 1) {
+                var i = p[t];
+                if ('color' === i.filter) {
+                  var n = i.term, r = he(n.replace('#', '')), o = fe(r[0], r[1], r[2]), s = ne(e, o[0]), a = re(e, o[1], o[2]), l = se(s, a);
+                  ge(l.x, l.y, n, i.id);
+                }
+              }
+            }, ie = function(e) {
+              c.find('.searchTokenItem.color .tokenName').each(function(t, i) {
+                var n = $(i), r = n.text(), o = he(r.replace('#', '')), s = fe(o[0], o[1], o[2]), a = ne(e, s[0]), l = re(e, s[1], s[2]), c = se(a, l), d = n.parents('.searchTokenItem').attr('data-id');
+                ge(c.x, c.y, r, d);
+              });
+            }, ne = function(e, t) {
+              var i, n = 0, r = 5, o = 0, s = 0;
+              for (n in e) {
+                var a = Math.abs(t - e[n]);
+                a < r && (r = a, o = parseInt(n));
+              }
+              for (i = e[o]; i === e[o + s];) s += 1;
+              return o += Math.floor(.5 * s), parseInt(o);
+            }, re = function(e, t, i) {
+              var n, r, o, s = this.SaturationDict, a = s.opacity, l = a.length, c = function(e) {return 100 * e;};
+              t = 100 - t;
+              for (var d = 0; d < l; d += 1) if (t >= c(a[d])) {
+                r = Math.max(0, d - 1), o = Math.min(d, l), n = c(a[r]);
+                break;
+              }
+              var u = s.stops[r], p = s.stops[o] - u, h = c(u) + n * p, f = s.endY * (h / 100);
+              return parseInt(f);
+            }, oe = function(e, t) {(t += 47) > n ? e.addClass('left') : e.removeClass('left');},
+            se = function(e, t) {return t - 23 - 4 < 4 ? t = 27 : t + 23 + 4 > o && (t = o - 27), e - 23 - 4 < 4 ? e = 27 : e + 23 + 4 > n && (e = n - 27), { x: e, y: t };}, ae = function(e) {
+              var t = 0;
+              for (e = parseInt(e), t; t < u; t += 1) if (p[t] && p[t].id === e) return t;
+              return !1;
+            }, le = function() {
+              a.on('click.color', '.colorSpectrum', function(e) {
+                var t = me(e.offsetX, e.offsetY), i = ye(t.hex, 'spectrum'), n = se(t.x, t.y), r = i.id;
+                we() && (ge(n.x, n.y, t.hex, r), be(r, i));
+              }), l.on('resize.color', _.debounce(function() {}, 200)), a.on('click.color', '.removeColorDrop', function(e) {
+                var t = $(this).parents('.colorDrop'), i = t.attr('data-id');
+                c.find('.color[data-id="' + i + '"]').remove(), t.remove(), p.splice(ae(i), 1);
+              }), a.on('mouseenter.color', '.colorDropBg', function(e) {$(this).parent().addClass('hover');}).on('mouseleave.color', '.colorDropBg', function() {$(this).parent().removeClass('hover');}), interact('.colorDrop', { context: a.find('.colorSpectrum') }).draggable({
+                inertia: {
+                  resistance: 30,
+                  minSpeed: 200,
+                  endSpeed: 100
+                },
+                restrict: { restriction: a.find('.spectrumRestriction')[0], endOnly: !0, autoScroll: !1 },
+                autoScroll: !1,
+                onmove: function(e) {
+                  var t = e.target, i = Math.round(parseFloat(t.getAttribute('data-x')) + e.dx), r = Math.round(parseFloat(t.getAttribute('data-y')) + e.dy), s = t.getAttribute('data-id');
+                  if (t.style.webkitTransform = t.style.transform = 'translate(' + i + 'px, ' + r + 'px)', t.setAttribute('data-x', i), t.setAttribute('data-y', r), (t = $(t)).addClass('moving'), r >= 0 && r < o - 0 && i >= 0 && i < n - 0) {
+                    var a = c.find('.searchTray').find('.color[data-id="' + s + '"]'), l = me(i, r).hex;
+                    t.find('.colorDropBg').css('background-color', l), a.length > 0 && de(a, l, 'color', 'spectrum', 0, s), ce(s, l);
+                  }
+                },
+                onend: function(e) {
+                  var t = $(e.target), i = e.pageX;
+                  t.removeClass('moving'), oe(t, i);
                 }
               });
-            }, 200)) : H(t);
-          }, 1);
-        }, q = function() {
-          var e = 'saves', t = window.location.href;
-          return -1 !== t.indexOf('/search/saves/') ? e = 'saves' : -1 !== t.indexOf('/search/collections/') ? e = 'collections' : -1 !== t.indexOf('/search/people/') && (e = 'people'), e;
-        }, W = function() {
-          var e = p;
-          if (w) {
-            var t = [], i = X($.trim(d.val()));
-            for (var n in e) t.push(e[n].term);
-            if ('' !== i.join('') && !_.isEqual(t, i)) {
-              var r = [];
-              e = [];
-              for (var o = 0; o < i.length; o += 1) {
-                var s = i[o];
-                if (s && '' !== s) {
-                  var a = _.filter(p, function(e) {return e.term === s;});
-                  if (a.length > 0) l = a[0]; else {
-                    var l = M(s, 'typed', o, B());
-                    l.submitted = 0;
-                  }
-                  s = l.term, 'color' === l.filter && -1 !== r.indexOf(s) || (e.push(l), r.push(s));
+            }, ce = function(e, t) {
+              var i = 0;
+              for (e = parseInt(e), i; i < u; i += 1) p[i] && p[i].id === e && (p[i].term = t);
+            }, de = function(e, t, i, n, r, o) {
+              var s = O(t, i, n, r, o);
+              '' !== s && (e.replaceWith(s), ue(o, t, n));
+            }, ue = function(e, t, i) {
+              var n = ae(e);
+              p[n].term_updated = t, p[n].type_updated = i;
+            }, pe = function(e, t, i) {return '#' + ((1 << 24) + (e << 16) + (t << 8) + i).toString(16).slice(1);},
+            he = function(e) {return r = parseInt(e.substring(0, 2), 16), g = parseInt(e.substring(2, 4), 16), b = parseInt(e.substring(4, 6), 16), [r, g, b];}, fe = function() {
+              var e, t, i, n, r, o = arguments[0] / 255, s = arguments[1] / 255, a = arguments[2] / 255, l = Math.max(o, s, a), c = l - Math.min(o, s, a), d = function(e) {return (l - e) / 6 / c + .5;};
+              return 0 == c ? n = r = 0 : (r = c / l, e = d(o), t = d(s), i = d(a), o === l ? n = i - t : s === l ? n = 1 / 3 + e - i : a === l && (n = 2 / 3 + t - e), n < 0 ? n += 1 : n > 1 && (n -= 1)), [Math.round(360 * n), Math.round(100 * r), Math.round(100 * l)];
+            }, me = function(e, t) {
+              var n = i[0].getContext('2d').getImageData(e, t, 1, 1).data, r = pe(n[0], n[1], n[2]), o = ve(e, t);
+              return { x: o.x, y: o.y, hex: r };
+            }, ge = function(t, n, r, o) {
+              var s = '<div class="colorDrop" data-id="' + o + '" style="transform:translate(' + t + 'px,' + n + 'px);"><div class="colorDropBg" style="background:' + r + ';"><div class="removeColorDrop"><div></div></div></div></div>',
+                  a = $(s);
+              return a.attr('data-x', t), a.attr('data-y', n), a[0].xp = t / e.browser.width, a[0].yp = n / e.browser.height, i.parent().append(a), oe(a, t), o;
+            }, ve = function(e, t) {return t < 4 ? t = 4 : t > o - 4 && (t = o - 4), e < 4 ? e = 4 : e > n - 4 && (e = n - 4), { x: e, y: t };}, ye = function(e, t) {
+              var i = M(e, t, u + 1, B());
+              return i.submitted = 0, i;
+            }, be = function(e, t) {
+              if (we()) {
+                var i = O(t.term, t.filter, t.type, t.index, e);
+                '' !== i && (D(), c.find('.tokenInput').before(i), I(p, t), A()), x.push(e);
+              } else alert('You can only select up to 5 colors.');
+            }, we = function() {return _.filter(p, function(e) {return e && 'color' === e.filter;}).length < 5;};
+        e.json && !e.json.page.disable_global_search_tokens && function() {
+          var e = Q(window.location.search);
+          if (v = q(), e && e.q) {
+            X(e.q);
+            var i = e.qa || 'tag';
+            y = !1, t = !1, _currentState = { q: e.q, qa: i, term_meta: e.term_meta }, I(e.term_meta), G(_currentState);
+          } else _currentState = { q: !1, qa: !1, term_meta: !1 };
+        }(), A(), e.json && !e.json.page.disable_global_search && function() {
+          var i = e.$app;
+          e.$document.on('keydown.search', function(e, t) {T(e, t);}), c.on('blur.search', '.field', function(e, t) {y = !1, a.removeClass('fieldHasFocus'), W(), F(), H();}), c.on('click.search', '.field, .tokenName', function(e, t) {T(e, t);}), a.on('click.search', '.removeToken', function() {
+            var e = $(this).parents('.searchTokenItem'), t = (e.attr('data-position'), e.attr('data-id'));
+            e.remove(), P(), l.trigger('onSearchTokenRemoved', [t]);
+          }), a.on('click.search', '.submitTrigger', function(t) {e.analytics.trackGAEvent('Color Search', 'submit ', 'clicked'), d.trigger('onSearchSubmit');}), a.on('click.search', '.closeTrigger', function(e) {Z();}), a.on('click.search', '.colorSearchTrigger', function(t) {$(this).hasClass('active') ? Z() : (e.analytics.trackGAEvent('Color Search', 'search bar icon', 'opened'), K());}), e.$app.find('.featured').on('click.search', '.colorSearchTrigger', function(t) {e.analytics.trackGAEvent('Color Search', 'featured banner', 'opened'), K();}), d.on('onSearchSubmit', function() {
+            var i = w ? p : X(d.val()), n = e.config.BASE_URL, r = [], o = [];
+            y = !1, t = !1;
+            for (var s = 0; s < i.length; s += 1) {
+              var a = w ? i[s] : M(i[s], 'typed', s, B());
+              o.push(a.term), r.push(Y(a));
+            }
+            n += '/search/' + v + '/?q=' + encodeURIComponent(o.join(' ')), n += '&qa=typed&' + V(r, 'term_meta'), e.redirect(n);
+          }), l.on('onSearchTokenRemoved', function(i, n) {
+            var r = e.config.BASE_URL, o = ae(n);
+            if (y = !1, t = !1, p.length > 1 && 'object' == typeof p[o]) {
+              X(_currentState.q);
+              var a, l = [], c = [], d = p[o], u = 'color' === d.filter && w;
+              p.splice(o, 1), a = p.length, u && s.find('.colorDrop[data-id="' + n + '"]').remove();
+              for (var h = 0; h < a; h += 1) {
+                var f = p[h];
+                if (f) {
+                  var m = M(f.term, f.type, h, f.id);
+                  c.push(m.term), l.push(Y(m));
                 }
               }
+              u || (r += '/search/' + v + '/?q=' + encodeURIComponent(c.join(' ')), r += '&qa=remove&' + V(l, 'term_meta'), r += '&remove_refine=' + Y(d), e.redirect(r));
+            } else e.redirect(r);
+          }), e.$header.on('mousedown.search', '.suggestedTermName', function() {
+            $(this);
+            for (var t = e.config.BASE_URL, i = [], n = [], r = JSON.parse($(this).attr('data-query')), o = X(r.selected_query), s = 0; s < o.length; s += 1) {
+              var a = M(o[s], 'autocomplete', s, B());
+              n.push(a.term), i.push(Y(a));
             }
-          } else e = _.filter(p, function(e) {return e && 1 === e.submitted;});
-          U(e), w && (J(), te(h));
-        }, B = function() {
-          for (var e = function() {return Math.floor(900 * Math.random() + 100);}, t = e(); C.indexOf(t) > -1;) t = e();
-          return C.push(t), t;
-        }, G = function(e) {
-          var t = '';
-          if (e) {
-            for (var i = e.term_meta, n = i.length, r = 0; r < n; r += 1) {
-              var o = i[r];
-              t += O(o.term, o.filter, o.type, r, o.id);
+            return t += '/search/' + v + '/?q=' + encodeURIComponent(n.join(' ')), t += '&qa=autocomplete&entered_query=' + r.entered_query + '&selected_query=' + r.selected_query, t += '&' + V(i, 'term_meta'), e.redirect(t), !1;
+          }), i.on('click.search', '.searchableTerm', function() {
+            for (var t = $(this), i = e.config.BASE_URL, n = [], r = [], o = X(t.data('query')), s = 0; s < o.length; s += 1) {
+              var a = M(o[s], 'tag', s, B());
+              r.push(a.term), n.push(Y(a));
             }
-            I(i);
-          }
-          d.val(''), '' !== t && (c.find('.searchTokenWrapper').remove(), c.find('.searchTray').prepend(t), e.q), A();
-        }, U = function(e) {
-          var t = '', i = e.length;
-          if (i > 0) for (var n = 0; n < i; n += 1) {
-            var r = e[n];
-            r && (t += O(r.term, r.filter, r.type, r.index, r.id));
-          }
-          d.val(''), '' !== t && (c.find('.searchTokenWrapper').remove(), c.find('.searchTray').prepend(t)), I(e), A();
-        }, X = function(e) {
-          var t,
-              i = ['and', 'that', 'but', 'or', 'as', 'if', 'when', 'than', 'because', 'while', 'where', 'after', 'so', 'though', 'since', 'until', 'whether', 'before', 'although', 'nor', 'like', 'once', 'unless', 'now', 'except', 'the', 'a', 'an', 'san', 'for', 'in', 'with'],
-              n = [], r = [];
-          (t = (e = $.trim(decodeURIComponent(e))).split(/\s+/)).find(function(e) {return $.inArray(e.toLowerCase(), i) > -1;}) && (t = [e]);
-          for (var o = 0; o < t.length; o += 1) {
-            var s = t[o];
-            '#' === s[0] && /(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i.test(s) ? r.push(s) : n.push(s);
-          }
-          return t = n.concat(r);
-        }, Y = function(e) {
-          var t = '';
-          return 'typed' === e.type ? t += e.term + '|' + e.type + '|' + e.filter + '|' + e.index : 'tag' === e.type ? t += e.term + '|' + e.type + '|' + e.filter + '|' + e.index : 'autocomplete' === e.type ? t += e.term + '|' + e.type + '|' + e.filter + '|' + e.index : 'guide' === e.type ? t += e.term + '|' + e.type + '|' + e.filter + '|' + e.index : 'spectrum' === e.type && (t += e.term + '|' + e.type + '|' + e.filter + '|' + e.index), t;
-        }, V = function(e, t) {
-          var i = [];
-          for (var n in e) if (e.hasOwnProperty(n)) {
-            var r = 'term_meta' === t ? t + '[]' : t, o = e[n];
-            i.push('object' == typeof o ? V(o, r) : encodeURIComponent(r) + '=' + encodeURIComponent(o));
-          }
-          return i.join('&');
-        }, Q = function(e) {
-          if ('' === (e = decodeURI(e))) return !1;
-          for (var t = [], i = e.replace('?', '').split('&'), n = function(e, t) {
-            if (-1 !== e.indexOf('|')) {
-              if (e = e.split('|'), 'term_meta' === a) return {
-                term: e[0],
-                type: e[1],
-                filter: e[2],
-                index: e[3],
-                submitted: 1,
-                id: B()
-              };
-              if ('add_refine' === a) return { action: 'add_refine', term: e[0], type: 'guide', filter: e[2], index: e[3], submitted: 1 };
-              if ('remove_refine' === a) return { action: 'remove_refine', term: e[0], type: 'guide', filter: e[2], index: e[3], submitted: 1 };
+            return i += '/search/' + v + '/?q=' + encodeURIComponent(r.join(' ')), i += '&qa=tag&' + V(n, 'term_meta'), e.redirect(i), !1;
+          }), i.on('click.search', '.guide', function() {
+            var t = $(this), i = e.config.BASE_URL, n = [], r = [], o = t.data('token'), s = M(o.label, 'guide', o.position, B()), a = X(_currentState.q);
+            a.splice(o.position, 0, o.label);
+            for (var l = 0; l < a.length; l += 1) {
+              var c = M(a[l], 'guide', l, B());
+              r.push(c.term), n.push(Y(c));
             }
-            return e;
-          }, r = i.length, o = 0; o < r; o += 1) {
-            var s = i[o].split('='), a = decodeURIComponent(s[0]), l = $.trim(decodeURIComponent(s[1]));
-            if ('term_meta[]' === a) {
-              a = a.substring(0, a.length - 2);
-              var c = n(l);
-              '' !== c && (void 0 === t[a] ? t[a] = new Array(c) : t[a].push(c));
-            } else 'add_refine' === a || 'remove_refine' === a ? t.action = n(l) : t[a] = n(l);
-          }
-          if (t.qa || (t.qa = 'tag'), !t.term_meta && t.q) {
-            var d = [];
-            for (e = t.q.split(' '), o = 0; o < e.length; o += 1) {
-              var u = M(e[o], 'tag', o, e[o].id);
-              u.submitted = 1, u.id = B(), d.push(u);
-            }
-            t.term_meta = d;
-          }
-          return t;
-        }, K = function() {
-          if (!w) {
-            var t = a.find('.headerContainer');
-            y = !0, w = !0, l.trigger('onHeaderDropdownClosed'), a.find('.colorSearchTrigger').addClass('active'), e.$html.addClass('fixifyHeader'), e.browser.setPageLock(), e.$body.addClass('noScroll'), n = e.browser.getWindowWidth(), o = e.browser.height - (e.$html.hasClass('freeze') ? 107 : 138), 0 === a.find('.colorSearch').length && t.append('<div class="colorSearch"><div class="controls"><div class="instructions">Select up to five colors</div><button type="button" class="submitTrigger"><span>Search</span></button><button type="button" class="closeTrigger canClose grey"><em></em></button></div><div class="colorSearchContainer"><div class="closeable"></div><div class="spectrumRestriction"></div><canvas class="colorSpectrum"></canvas></div></div>'), s = t.find('.colorSearchContainer'), ee(), t.find('.colorSearch').addClass('active');
-          }
-        },
-        Z = function() {e.$body.removeClass('noScroll'), e.$html.removeClass('fixifyHeader'), e.browser.releasePageLock(), a.find('.colorSearchTrigger').removeClass('active'), a.find('.colorSearch').removeClass('active'), l.off('.color'), a.off('.color'), interact('.colorDrop').unset(), J(), y = !1, w = !1, W();},
-        J = function() {s.find('.colorDrop').remove();}, ee = function() {
-          var e = a.find('.colorSpectrum'), t = e[0], r = t.getContext('2d'), s = Math.ceil(.5 * o), l = o - s, c = o, d = r.createLinearGradient(0, 0, 0, s), u = r.createLinearGradient(0, l, 0, c),
-              p = new Image;
-          this.SaturationDict = { startY: 0, endY: s, stops: [0, .08, .2, .38, .63, .78, .91, 1], opacity: [1, .89, .69, .35, .18, .06, 0] }, this.BrightnessDict = {
-            startY: l,
-            endY: c,
-            stops: [0, .088, .184, .28, .405, .683, .897],
-            opacity: [0, .012, .039, .102, .239, .69, 1]
-          }, i = e, t.width = n, t.height = o, p.onload = function() {
-            r.drawImage(this, 0, 0, n, o);
-            var e = r.getImageData(0, 0, n, o).data, t = Math.round(n / 210 * 5);
-            h = [];
-            for (var i = 0; i < n; ++i) {
-              var a = 4 * (n + i), c = fe(e[a], e[a + 1], e[a + 2]);
-              h.push(c[0]);
-            }
-            h.slice(t, h.length - t), d.addColorStop(0, 'hsla(0,0%,100%,1)'), d.addColorStop(.08, 'hsla(0,0%,100%,1)'), d.addColorStop(.2, 'hsla(0,0%,100%,0.89)'), d.addColorStop(.38, 'hsla(0,0%,100%,0.69)'), d.addColorStop(.63, 'hsla(0,0%,100%,0.35)'), d.addColorStop(.78, 'hsla(0,0%,100%,0.18)'), d.addColorStop(.91, 'hsla(0,0%,100%,0.06)'), d.addColorStop(1, 'hsla(0,0%,100%,0)'), r.fillStyle = d, r.fillRect(0, 0, n, s), u.addColorStop(0, 'rgba(0, 0, 0, 0.000)'), u.addColorStop(.088, 'rgba(0, 0, 0, 0.012)'), u.addColorStop(.184, 'rgba(0, 0, 0, 0.039)'), u.addColorStop(.28, 'rgba(0, 0, 0, 0.102)'), u.addColorStop(.405, 'rgba(0, 0, 0, 0.239)'), u.addColorStop(.683, 'rgba(0, 0, 0, 0.690)'), u.addColorStop(.897, 'rgba(0, 0, 0, 1.000)'), r.fillStyle = u, r.fillRect(0, l, n, s), ie(h), le();
-          }, p.src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAANIAAAABCAIAAAAkUWeUAAAAxElEQVR4AXWRB64rQQjAzNZ//5u+9EzjAwpS6siyvH3RiO68rwFLssKWNnbCyb9nZ7z7iXxJvjZYkhkmOjSkQY0oEeZE7vCEuJXbkPvg3t3eHlJG2HuyrmadqoXObUxNjbkzwSI5bbIlbzNn5OGzk/WJmEoX2kybHq5BMYu7CHcL3N4e7sKTk2pIGBrakC42wzJYh3szCN636BdPuyQ5hjzGWJQlvGpZ9CZ6ZVzQC+MUHNGj2zm49ZDnzee484rekIXX9R83Jo4RLxbUQgAAAABJRU5ErkJggg==';
-        }, te = function(e) {
-          for (var t = 0; t < u; t += 1) {
-            var i = p[t];
-            if ('color' === i.filter) {
-              var n = i.term, r = he(n.replace('#', '')), o = fe(r[0], r[1], r[2]), s = ne(e, o[0]), a = re(e, o[1], o[2]), l = se(s, a);
-              ge(l.x, l.y, n, i.id);
-            }
-          }
-        }, ie = function(e) {
-          c.find('.searchTokenItem.color .tokenName').each(function(t, i) {
-            var n = $(i), r = n.text(), o = he(r.replace('#', '')), s = fe(o[0], o[1], o[2]), a = ne(e, s[0]), l = re(e, s[1], s[2]), c = se(a, l), d = n.parents('.searchTokenItem').attr('data-id');
-            ge(c.x, c.y, r, d);
+            return i += '/search/' + v + '/?q=' + encodeURIComponent(r.join(' ')), i += '&qa=guide&' + V(n, 'term_meta'), i += '&add_refine=' + Y(s), e.redirect(i), !1;
+          }), l.on('onBodyColumnsChanged.search', function() {A();});
+        }();
+      }, e.guides = function() {
+        var t = e.$app.find('.guides'), i = t.find('.guidesContainer'), n = t.find('.guidesScroller'), r = t.width(), o = i.children(), s = o.first().width(), a = o.length, l = t.find('.shiftRight'),
+            c = t.find('.shiftLeft'), d = 0, u = (i.width(), !1), p = function(e) {d <= Math.abs(e) + t.width() ? l.hide() : l.show(), 0 !== e ? c.show() : c.hide(), u = !1;};
+        d = s * a, i.css('width', d + 'px'), p(0);
+        l.on('click', function(e) {
+          return u || (u = !0, n.scrollTo('+=' + .5 * r + 'px', 280, {
+            axis: 'x',
+            onAfter: function() {p(i.position().left);}
+          })), !1;
+        }), c.on('click', function(e) {return u || (u = !0, n.scrollTo('-=' + .5 * r + 'px', 280, { axis: 'x', onAfter: function() {p(i.position().left);} })), !1;}), i.css('width', a * s);
+      };
+    }(App),
+    function(e) {
+      var t = {
+        clicksToBackground: 0,
+        backClick: !1,
+        rewindHistory: !1,
+        forceDefaultImageLink: !1,
+        ignoreDoubleStateChange: !1,
+        setDocumentTitle: function(e) {window.document.title = e;},
+        saveState: function(t, i, n, r) {
+          var o, s = null;
+          null !== t && (o = e.browser.getScrollPosition() - $('.activeSave').offset().top, s = {
+            id: t,
+            type: i,
+            scrollOffset: e.pagination.settings.totalOffset,
+            scrollDifference: o,
+            currentPage: e.pagination.settings.currentPage
+          }), window.history.replaceState(s, n, r);
+        }
+      };
+      e.historyManager = t;
+    }(App),
+    function(e) {
+      function t(t) {
+        $.holdReady(!0), $.getScript('https://apis.google.com/js/api:client.js', function() {
+          $.holdReady(!1), gapi.load('auth2', function() {
+            auth2 = gapi.auth2.init({
+              client_id: e.config.g_auth_client_id,
+              cookiepolicy: 'single_host_origin'
+            }), i(document.getElementById(t + 'WithGoogle'), t);
           });
-        }, ne = function(e, t) {
-          var i, n = 0, r = 5, o = 0, s = 0;
-          for (n in e) {
-            var a = Math.abs(t - e[n]);
-            a < r && (r = a, o = parseInt(n));
-          }
-          for (i = e[o]; i === e[o + s];) s += 1;
-          return o += Math.floor(.5 * s), parseInt(o);
-        }, re = function(e, t, i) {
-          var n, r, o, s = this.SaturationDict, a = s.opacity, l = a.length, c = function(e) {return 100 * e;};
-          t = 100 - t;
-          for (var d = 0; d < l; d += 1) if (t >= c(a[d])) {
-            r = Math.max(0, d - 1), o = Math.min(d, l), n = c(a[r]);
-            break;
-          }
-          var u = s.stops[r], p = s.stops[o] - u, h = c(u) + n * p, f = s.endY * (h / 100);
-          return parseInt(f);
-        }, oe = function(e, t) {(t += 47) > n ? e.addClass('left') : e.removeClass('left');},
-        se = function(e, t) {return t - 23 - 4 < 4 ? t = 27 : t + 23 + 4 > o && (t = o - 27), e - 23 - 4 < 4 ? e = 27 : e + 23 + 4 > n && (e = n - 27), { x: e, y: t };}, ae = function(e) {
-          var t = 0;
-          for (e = parseInt(e), t; t < u; t += 1) if (p[t] && p[t].id === e) return t;
-          return !1;
-        }, le = function() {
-          a.on('click.color', '.colorSpectrum', function(e) {
-            var t = me(e.offsetX, e.offsetY), i = ye(t.hex, 'spectrum'), n = se(t.x, t.y), r = i.id;
-            we() && (ge(n.x, n.y, t.hex, r), be(r, i));
-          }), l.on('resize.color', _.debounce(function() {}, 200)), a.on('click.color', '.removeColorDrop', function(e) {
-            var t = $(this).parents('.colorDrop'), i = t.attr('data-id');
-            c.find('.color[data-id="' + i + '"]').remove(), t.remove(), p.splice(ae(i), 1);
-          }), a.on('mouseenter.color', '.colorDropBg', function(e) {$(this).parent().addClass('hover');}).on('mouseleave.color', '.colorDropBg', function() {$(this).parent().removeClass('hover');}), interact('.colorDrop', { context: a.find('.colorSpectrum') }).draggable({
-            inertia: {
-              resistance: 30,
-              minSpeed: 200,
-              endSpeed: 100
-            },
-            restrict: { restriction: a.find('.spectrumRestriction')[0], endOnly: !0, autoScroll: !1 },
-            autoScroll: !1,
-            onmove: function(e) {
-              var t = e.target, i = Math.round(parseFloat(t.getAttribute('data-x')) + e.dx), r = Math.round(parseFloat(t.getAttribute('data-y')) + e.dy), s = t.getAttribute('data-id');
-              if (t.style.webkitTransform = t.style.transform = 'translate(' + i + 'px, ' + r + 'px)', t.setAttribute('data-x', i), t.setAttribute('data-y', r), (t = $(t)).addClass('moving'), r >= 0 && r < o - 0 && i >= 0 && i < n - 0) {
-                var a = c.find('.searchTray').find('.color[data-id="' + s + '"]'), l = me(i, r).hex;
-                t.find('.colorDropBg').css('background-color', l), a.length > 0 && de(a, l, 'color', 'spectrum', 0, s), ce(s, l);
-              }
-            },
-            onend: function(e) {
-              var t = $(e.target), i = e.pageX;
-              t.removeClass('moving'), oe(t, i);
-            }
-          });
-        }, ce = function(e, t) {
-          var i = 0;
-          for (e = parseInt(e), i; i < u; i += 1) p[i] && p[i].id === e && (p[i].term = t);
-        }, de = function(e, t, i, n, r, o) {
-          var s = O(t, i, n, r, o);
-          '' !== s && (e.replaceWith(s), ue(o, t, n));
-        }, ue = function(e, t, i) {
-          var n = ae(e);
-          p[n].term_updated = t, p[n].type_updated = i;
-        }, pe = function(e, t, i) {return '#' + ((1 << 24) + (e << 16) + (t << 8) + i).toString(16).slice(1);},
-        he = function(e) {return r = parseInt(e.substring(0, 2), 16), g = parseInt(e.substring(2, 4), 16), b = parseInt(e.substring(4, 6), 16), [r, g, b];}, fe = function() {
-          var e, t, i, n, r, o = arguments[0] / 255, s = arguments[1] / 255, a = arguments[2] / 255, l = Math.max(o, s, a), c = l - Math.min(o, s, a), d = function(e) {return (l - e) / 6 / c + .5;};
-          return 0 == c ? n = r = 0 : (r = c / l, e = d(o), t = d(s), i = d(a), o === l ? n = i - t : s === l ? n = 1 / 3 + e - i : a === l && (n = 2 / 3 + t - e), n < 0 ? n += 1 : n > 1 && (n -= 1)), [Math.round(360 * n), Math.round(100 * r), Math.round(100 * l)];
-        }, me = function(e, t) {
-          var n = i[0].getContext('2d').getImageData(e, t, 1, 1).data, r = pe(n[0], n[1], n[2]), o = ve(e, t);
-          return { x: o.x, y: o.y, hex: r };
-        }, ge = function(t, n, r, o) {
-          var s = '<div class="colorDrop" data-id="' + o + '" style="transform:translate(' + t + 'px,' + n + 'px);"><div class="colorDropBg" style="background:' + r + ';"><div class="removeColorDrop"><div></div></div></div></div>',
-              a = $(s);
-          return a.attr('data-x', t), a.attr('data-y', n), a[0].xp = t / e.browser.width, a[0].yp = n / e.browser.height, i.parent().append(a), oe(a, t), o;
-        }, ve = function(e, t) {return t < 4 ? t = 4 : t > o - 4 && (t = o - 4), e < 4 ? e = 4 : e > n - 4 && (e = n - 4), { x: e, y: t };}, ye = function(e, t) {
-          var i = M(e, t, u + 1, B());
-          return i.submitted = 0, i;
-        }, be = function(e, t) {
-          if (we()) {
-            var i = O(t.term, t.filter, t.type, t.index, e);
-            '' !== i && (D(), c.find('.tokenInput').before(i), I(p, t), A()), x.push(e);
-          } else alert('You can only select up to 5 colors.');
-        }, we = function() {return _.filter(p, function(e) {return e && 'color' === e.filter;}).length < 5;};
-    e.json && !e.json.page.disable_global_search_tokens && function() {
-      var e = Q(window.location.search);
-      if (v = q(), e && e.q) {
-        X(e.q);
-        var i = e.qa || 'tag';
-        y = !1, t = !1, _currentState = { q: e.q, qa: i, term_meta: e.term_meta }, I(e.term_meta), G(_currentState);
-      } else _currentState = { q: !1, qa: !1, term_meta: !1 };
-    }(), A(), e.json && !e.json.page.disable_global_search && function() {
-      var i = e.$app;
-      e.$document.on('keydown.search', function(e, t) {T(e, t);}), c.on('blur.search', '.field', function(e, t) {y = !1, a.removeClass('fieldHasFocus'), W(), F(), H();}), c.on('click.search', '.field, .tokenName', function(e, t) {T(e, t);}), a.on('click.search', '.removeToken', function() {
-        var e = $(this).parents('.searchTokenItem'), t = (e.attr('data-position'), e.attr('data-id'));
-        e.remove(), P(), l.trigger('onSearchTokenRemoved', [t]);
-      }), a.on('click.search', '.submitTrigger', function(t) {e.analytics.trackGAEvent('Color Search', 'submit ', 'clicked'), d.trigger('onSearchSubmit');}), a.on('click.search', '.closeTrigger', function(e) {Z();}), a.on('click.search', '.colorSearchTrigger', function(t) {$(this).hasClass('active') ? Z() : (e.analytics.trackGAEvent('Color Search', 'search bar icon', 'opened'), K());}), e.$app.find('.featured').on('click.search', '.colorSearchTrigger', function(t) {e.analytics.trackGAEvent('Color Search', 'featured banner', 'opened'), K();}), d.on('onSearchSubmit', function() {
-        var i = w ? p : X(d.val()), n = e.config.BASE_URL, r = [], o = [];
-        y = !1, t = !1;
-        for (var s = 0; s < i.length; s += 1) {
-          var a = w ? i[s] : M(i[s], 'typed', s, B());
-          o.push(a.term), r.push(Y(a));
-        }
-        n += '/search/' + v + '/?q=' + encodeURIComponent(o.join(' ')), n += '&qa=typed&' + V(r, 'term_meta'), e.redirect(n);
-      }), l.on('onSearchTokenRemoved', function(i, n) {
-        var r = e.config.BASE_URL, o = ae(n);
-        if (y = !1, t = !1, p.length > 1 && 'object' == typeof p[o]) {
-          X(_currentState.q);
-          var a, l = [], c = [], d = p[o], u = 'color' === d.filter && w;
-          p.splice(o, 1), a = p.length, u && s.find('.colorDrop[data-id="' + n + '"]').remove();
-          for (var h = 0; h < a; h += 1) {
-            var f = p[h];
-            if (f) {
-              var m = M(f.term, f.type, h, f.id);
-              c.push(m.term), l.push(Y(m));
-            }
-          }
-          u || (r += '/search/' + v + '/?q=' + encodeURIComponent(c.join(' ')), r += '&qa=remove&' + V(l, 'term_meta'), r += '&remove_refine=' + Y(d), e.redirect(r));
-        } else e.redirect(r);
-      }), e.$header.on('mousedown.search', '.suggestedTermName', function() {
-        $(this);
-        for (var t = e.config.BASE_URL, i = [], n = [], r = JSON.parse($(this).attr('data-query')), o = X(r.selected_query), s = 0; s < o.length; s += 1) {
-          var a = M(o[s], 'autocomplete', s, B());
-          n.push(a.term), i.push(Y(a));
-        }
-        return t += '/search/' + v + '/?q=' + encodeURIComponent(n.join(' ')), t += '&qa=autocomplete&entered_query=' + r.entered_query + '&selected_query=' + r.selected_query, t += '&' + V(i, 'term_meta'), e.redirect(t), !1;
-      }), i.on('click.search', '.searchableTerm', function() {
-        for (var t = $(this), i = e.config.BASE_URL, n = [], r = [], o = X(t.data('query')), s = 0; s < o.length; s += 1) {
-          var a = M(o[s], 'tag', s, B());
-          r.push(a.term), n.push(Y(a));
-        }
-        return i += '/search/' + v + '/?q=' + encodeURIComponent(r.join(' ')), i += '&qa=tag&' + V(n, 'term_meta'), e.redirect(i), !1;
-      }), i.on('click.search', '.guide', function() {
-        var t = $(this), i = e.config.BASE_URL, n = [], r = [], o = t.data('token'), s = M(o.label, 'guide', o.position, B()), a = X(_currentState.q);
-        a.splice(o.position, 0, o.label);
-        for (var l = 0; l < a.length; l += 1) {
-          var c = M(a[l], 'guide', l, B());
-          r.push(c.term), n.push(Y(c));
-        }
-        return i += '/search/' + v + '/?q=' + encodeURIComponent(r.join(' ')), i += '&qa=guide&' + V(n, 'term_meta'), i += '&add_refine=' + Y(s), e.redirect(i), !1;
-      }), l.on('onBodyColumnsChanged.search', function() {A();});
-    }();
-  }, e.guides = function() {
-    var t = e.$app.find('.guides'), i = t.find('.guidesContainer'), n = t.find('.guidesScroller'), r = t.width(), o = i.children(), s = o.first().width(), a = o.length, l = t.find('.shiftRight'),
-        c = t.find('.shiftLeft'), d = 0, u = (i.width(), !1), p = function(e) {d <= Math.abs(e) + t.width() ? l.hide() : l.show(), 0 !== e ? c.show() : c.hide(), u = !1;};
-    d = s * a, i.css('width', d + 'px'), p(0);
-    l.on('click', function(e) {
-      return u || (u = !0, n.scrollTo('+=' + .5 * r + 'px', 280, {
-        axis: 'x',
-        onAfter: function() {p(i.position().left);}
-      })), !1;
-    }), c.on('click', function(e) {return u || (u = !0, n.scrollTo('-=' + .5 * r + 'px', 280, { axis: 'x', onAfter: function() {p(i.position().left);} })), !1;}), i.css('width', a * s);
-  };
-}(App), function(e) {
-  var t = {
-    clicksToBackground: 0,
-    backClick: !1,
-    rewindHistory: !1,
-    forceDefaultImageLink: !1,
-    ignoreDoubleStateChange: !1,
-    setDocumentTitle: function(e) {window.document.title = e;},
-    saveState: function(t, i, n, r) {
-      var o, s = null;
-      null !== t && (o = e.browser.getScrollPosition() - $('.activeSave').offset().top, s = {
-        id: t,
-        type: i,
-        scrollOffset: e.pagination.settings.totalOffset,
-        scrollDifference: o,
-        currentPage: e.pagination.settings.currentPage
-      }), window.history.replaceState(s, n, r);
-    }
-  };
-  e.historyManager = t;
-}(App), function(e) {
-  function t(t) {
-    $.holdReady(!0), $.getScript('https://apis.google.com/js/api:client.js', function() {
-      $.holdReady(!1), gapi.load('auth2', function() {
-        auth2 = gapi.auth2.init({
-          client_id: e.config.g_auth_client_id,
-          cookiepolicy: 'single_host_origin'
-        }), i(document.getElementById(t + 'WithGoogle'), t);
-      });
-    });
-  }
-
-  function i(t, i) {
-    auth2.attachClickHandler(t, {}, function(t) {
-      var r = t.getAuthResponse().id_token;
-      t.disconnect();
-      var o = { token: r, request_token: e.config.requestToken };
-      o['google_' + i] = 1, n(o);
-    }, function(e) {});
-  }
-
-  function n(t) {
-    $.ajax({
-      url: '/resource/',
-      type: 'POST',
-      data: t,
-      success: function(t) {t.error ? e.$body.find('.socialAuthError').addClass('active').html(t.error) : (e.$body.find('.socialAuthError').removeClass('active'), e.redirect(t.location, 100));}
-    });
-  }
-
-  function r(t) {
-    $.holdReady(!0), $.getScript('https://connect.facebook.net/en_US/sdk.js', function() {
-      $.holdReady(!1), e[t + 'WithFacebook'] = function() {
-        return FB.login(function(i) {
-          if (i.authResponse) {
-            var r = { request_token: e.config.requestToken };
-            r['facebook_' + t] = 1, n(r);
-          }
-        }, { scope: 'email,public_profile', return_scopes: !0 }), !1;
-      }, window.fbAsyncInit = function() {FB.init({ appId: e.config.fb_auth_app_id, cookie: !0, version: e.config.fb_graph_version });};
-    });
-  }
-
-  e.loadSocialLogin = function() {t('login'), r('login');}, e.loadSocialSignup = function() {t('signup'), r('signup');};
-}(App), App.storage = function() {
-  var e = function() {try {return 'localStorage' in window && null !== window.localStorage;} catch (e) {return !1;}}();
-  return {
-    set: function(t, i, n) {
-      if (e) {
-        var r = !!n && $.now() + 1e3 * n;
-        i.timestamp = r, localStorage.setItem(t, JSON.stringify(i));
-      }
-    }, get: function(t) {
-      if (e) {
-        var i = localStorage.getItem(t);
-        return !!((i = JSON.parse(i)) && i.timestamp >= $.now()) && i;
-      }
-    }, remove: function(t) {e && localStorage.removeItem(t);}
-  };
-}(), function(e) {
-  function t(e, t, i, n, r) {
-    var o;
-    return 'twitter' === r ? o = function(r) {return r = 'https://twitter.com/intent/tweet?original_referer=' + encodeURIComponent(document.location.href), r += '&related=' + t, r += '&source=tweetbutton&text=' + i, r += '&url=' + e, r += '&via=' + n;}() : 'facebook' === r ? o = 'http://www.facebook.com/share.php?u=' + e + '&t=' + t : 'linkedin' === r && (o = 'http://www.linkedin.com/shareArticle?mini=true&url=' + e + '&title=' + i + '&summary=See many more awesome job opportunities on Designspiration Jobs.&source=Designspiration Jobs'), o;
-  }
-
-  e.socialShare = {
-    init: function(i) {
-      if (i = i || !1) {
-        var n = e.config.SHORT_URL, r = .5 * window.screen.width - 320, o = .3 * window.screen.height - 353 * .3;
-        i.each(function() {
-          var e = $(this),
-              i = t(encodeURIComponent(e.attr('data-url') || n), encodeURIComponent(e.attr('data-related')) || '', encodeURIComponent(e.attr('data-text')), e.attr('data-via') || '', e.attr('data-type'));
-          e.attr({ href: i, target: '_blank' });
-        }), i.on('click.sharing', function() {
-          var t = $(this), i = t.attr('href'), n = 'toolbar=0, status=0, width=640, height=353, top=' + o + ', left=' + r;
-          return 'twitter' === t.attr('data-type') ? 'undefined' == typeof twttr && window.open(i, 'sharer', n) : window.open(i, 'sharer', n), e.analytics.trackGAEvent('social_share', 'clicked', t.attr('data-type'), i), !1;
         });
       }
-    }
-  };
-}(App), function(e) {
-  function t(t, i) {
-    this.lastScrollTop = 0, this.url = location.href, this.container = i.parent().find('.Pagination'), this.loader = null, this.hasLoader = !1, this.loading = !1, this.settings = {
-      distance: 400,
-      current: 1,
-      totalPages: 1
-    }, this.request = {}, t && $.extend(this.settings, t), this.initLoader = function() {
-      var t = this.container;
-      this.loader = new e.loader(t, 3), t.addClass('isLoader');
-    }, this.showLoader = function(e) {
-      var t = this;
-      t.loading = e, $('.isLoader').removeClass('loading'), e ? t.loading && t.loader.container.addClass('loading') : t.loader.container.removeClass('loading');
-    }, this.initLoader();
-  }
 
-  t.prototype = {
-    isLoading: function() {return !this.loading && (!(this.settings.totalOffset <= this.settings.current) && void 0);},
-    showPagination: function() {this.hasMoreItems() ? this.container.addClass('active') : this.container.removeClass('active');},
-    handleScrollImpression: function() {this.settings.current > 1 && ('related-saves' == this.settings.page ? (e.analytics.trackGAPageview('User Profiles|Save Closeup|1', 'scroll/'), e.analytics.trackGAEvent('Scroll Pageviews', 'scroll/')) : e.analytics.trackGAPageview(!1, 'scroll/'));},
-    isScrollingDown: function() {
-      var t = e.browser.getScrollPosition(), i = t > this.lastScrollTop;
-      return this.lastScrollTop = t, i;
-    },
-    hasMoreItems: function() {return this.settings.has_more || 1 === this.settings.has_more;},
-    stopListening: function() {this.layoutManager.scroller.off('.scrollmonitor');}
-  }, e.pagination = t;
-}(App), function(e) {
-  var t = { EDIT_BTN: { classes: 'action editTrigger', text: 'Edit' }, SAVE_BTN: { classes: 'action saveTrigger', text: 'Save' }, SIGNUP_BTN: { classes: 'action signupTrigger', text: 'Save' } };
-  e.save = {
-    relatedAjaxPending: !1,
-    current: {},
-    hasRelatedFeed: !1,
-    validateForm: {
-      add: function() {
-        var t = e.component.activeComponent.find('.description'), i = e.component.activeComponent.find('.active.item'), n = $.trim(t.val()), r = i.attr('data-id');
-        return '' === n ? (e.validate.form(t, { description: 'Please describe what you\'re saving' }), !1) : (e.validate.form(t), !!r);
-      }, edit: function() {return !0;}
-    },
-    init: function() {this.addListeners();},
-    addListeners: function() {
-      var t = e.$body, i = this;
-      t.on('click', 'a[rel="external"]', e.trackLink), t.on('click', '.save .saveTrigger', function(t) {
-        var n = $(this), r = n.parents('.gridItem'), o = (r.find('.gridItemImage'), !1), s = !1;
-        e.save.hasRelatedFeed && (s = !0), o = s ? e.json.related.data : e.json.data;
-        var a = r.attr('data-id'), l = i.getSaveDataByID(a, o), c = {
-          component: 'save-to-collection',
-          modal: 'saveModal',
-          id: a,
-          description: l.description,
-          image: l.images['2x'].url,
-          height: r.height(),
-          width: r.width(),
-          gridItem: r,
-          trigger: n,
-          isRelatedClick: s
-        };
-        if (n.attr('data-web')) c.link = r.find('.gridItemLink').prop('href'), c.isUpload = !0; else {
-          var d = r.parents('.mediaSimilar').length;
-          c.link = n.prop('href'), c.count = parseInt(r.find('.gridItemCount').text()), c.bg = r.find('.gridItemLink').css('background-color'), c.isRelated = d, c.isUpload = !1;
-        }
-        return e.component.load(c), !1;
-      }), t.on('click', '.save .editTrigger', function(t) {
-        var n = $(this), r = n.parents('.gridItem'), o = r.parents('.mediaSimilar').length, s = !1, a = !1;
-        e.save.hasRelatedFeed && (a = !0), s = a ? e.json.related.data : e.json.data;
-        var l = r.attr('data-id'), c = i.getSaveDataByID(l, s);
-        return e.component.load({
-          component: 'edit-save',
-          modal: 'editSaveModal',
-          id: l,
-          description: c.description,
-          link: n.prop('href'),
-          count: c.resaves,
-          bg: c.background,
-          image: c.images['2x'].url,
-          height: r.height(),
-          width: r.width(),
-          gridItem: r,
-          trigger: n,
-          isRelated: o,
-          isRelatedClick: a
-        }), !1;
-      }), t.on('click', '.save .signupTrigger', function(t) {
-        var i = $(this);
-        return e.component.load({ component: e.page.accessUI.component, modal: e.page.accessUI.modal, trigger: i }), !1;
-      });
-    },
-    addGridItemListeners: function(t) {
-      var i = t.order.length, n = e.$html.hasClass('freeze') ? 48 : 0, r = t.container.offset().top, o = e.browser.getScrollPosition() + n, s = e.browser.height - n,
-          a = { top: e.browser.getScrollPosition() + n, bottom: o + s, height: s, offset: r, headerOffset: n }, l = i;
-      for (l; l-- > 0;) {
-        var c = t.order[l], d = t.childrenItemInfo[c];
-        if (t.inViewport(d, a)) {
-          if (d.promoted && 'object' == typeof d.promoted && (d.hasSentImpression || (e.ads.sendEvent('impression', d.promoted), d.hasSentImpression = !0)), !d.hasListeners) {
-            p = (u = d.itemWrapper.find('.gridItemInnerWrap')).find('.gridItemLink');
-            d.hasListeners = !0, d.promoted ? p.on('click.gridItemLink', function(t) {
-              var i = $(this).parents('.gridItem').attr('data-id'), n = e.save.hasRelatedFeed ? e.json.related.data : e.json.data, r = e.save.getSaveDataByID(i, n);
-              e.ads.sendEvent('click', r.promoted);
-            }) : (e.isMobile || u.on('mouseenter.gridItemInnerWrap', function() {e.save.buildGridActions($(this));}).on('mouseleave.gridItemInnerWrap', function() {$(this).find('.gridItemActions,.gridItemGradient').remove();}), p.on('click.gridItemLink', function(t) {
-              if (!e.usingkeyModifiers(t) && e.useHistory) {
-                var i = $(this), n = !1, r = i.parents('.gridItem'), o = r.attr('data-id'), s = !1, a = !1;
-                return e.save.current.id = parseInt(o), n && e.save.grid.cancelPreviousRequest(), 'page' === i.parents('.mediaSimilar.active').attr('data-rel') || r.hasClass('promoted') ? !0 : (e.save.hasRelatedFeed && (n = !0), s = n ? e.json.related.data : e.json.data, a = e.save.getSaveDataByID(o, s), e.json.related = !1, e.save.closeupLoader(a, !0, n), !1);
-              }
-            }));
-          }
-        } else if ('hasListeners' in d && d.hasListeners) {
-          var u = d.itemWrapper.find('.gridItemInnerWrap'), p = u.find('.gridItemLink');
-          d.hasListeners = !1, u.off('mouseenter.gridItemInnerWrap'), u.off('mouseleave.gridItemInnerWrap').find('.gridItemActions,.gridItemGradient').remove(), p.off('click.gridItemLink');
-        }
+      function i(t, i) {
+        auth2.attachClickHandler(t, {}, function(t) {
+          var r = t.getAuthResponse().id_token;
+          t.disconnect();
+          var o = { token: r, request_token: e.config.requestToken };
+          o['google_' + i] = 1, n(o);
+        }, function(e) {});
       }
-    },
-    buildGridActions: function(i) {
-      var n = i.parents('.gridItem');
-      if (i.find('.gridItemActions').length < 1 && !n.hasClass('promoted')) {
-        var r, o, s = n.attr('data-id'), a = e.save.hasRelatedFeed ? e.json.related.data : e.json.data, l = _.filter(a, function(e) {return e.id === parseInt(s);})[0], c = '';
-        e.json.page.user.isLoggedIn ? (r = t.SAVE_BTN.classes, o = t.SAVE_BTN.text, l.has_saved && (c = '<button type="button" class="' + t.EDIT_BTN.classes + '"><span>' + t.EDIT_BTN.text + '</span></button>')) : (r = t.SIGNUP_BTN.classes, o = t.SAVE_BTN.text), c += '<button type="button" class="' + r + '"><span>' + o + '</span></button>', l.resaves > 0 && (c += '<div class="gridItemCount">' + l.resaves + '</div>'), c = '<div class="gridItemActions">' + c + '</div>', i.append(c), i.find('.gridImageHeight').prepend('<div class="gridItemGradient"></div>');
-      }
-    },
-    buildCloseupActions: function(t, i) {
-      var n = '';
-      e.json.page.user.isLoggedIn ? t.has_saved ? (n = '<button type="button" class="action editTrigger isCloseup"><span>Edit</span></button>', n += '<button type="button" class="action saveTrigger isCloseup"><span>Save</span></button>') : n += '<button type="button" class="action saveTrigger isCloseup"><span>Save</span></button>' : n = '<button type="button" class="action signupTrigger isCloseup"><span>Save</span></button>', t.resaves > 0 && (n += '<div class="action gridItemCount">' + t.resaves + '</div>'), i.prepend(n);
-    },
-    getSaveDataByID: function(e, t) {
-      for (var i in t) if (t[i].id == e) return t[i];
-      return !1;
-    },
-    hashtagifyText: function(e) {return e.replace(/(\#)([^\s]+)/gi, ' <a href="/search/saves/?q=$2&qa=tag" data-type="tag" data-query="$2" class="descriptionTag searchableTerm" title="Explore $2 inspiration">#$2</a> ');},
-    showCloseupSavedBy: function(t) {
-      $.ajax({
-        url: '/resource/',
-        type: 'POST',
-        dataType: 'json',
-        data: { closeup_promoted: 1, request_token: e.config.requestToken },
-        error: function(e) {},
-        success: function(t) {t.data && e.ads.buildCloseupSidebar(t.data, e.$body.find('.mediaMeta'));},
-        complete: function() {}
-      });
-    },
-    buildCloseupTemplate: function(t, i) {
-      var n, r, o = e.component.activeComponent.find('.modalScroller'), s = o.find('.mediaWrapper'), a = o.find('.mediaActionWiper'), l = o.find('.mediaMeta'), c = e.config.gridItemWidth,
-          d = (e.config.gridItemHeight, t.images['3x']), u = c * (d.h / d.w) / c, p = { 'background-color': t.background, 'max-width': Math.min(600, t.images['2x'].w) }, h = parseInt(t.id),
-          f = o.find('.mediaImage');
-      o.find('.mediaLink').css(p), o.animate({ scrollTop: 0 }, 1), r = u * Math.min(600, t.images['2x'].w) + 68, n = o.find('.mediaMeta').outerHeight(), n = Math.max(r, n), o.find('.mediaImage').attr({
-        src: t.images['2x'].url,
-        width: d.w,
-        height: d.h,
-        alt: t.description,
-        'data-mw': 0,
-        'data-mh': 0
-      });
-      var m = new Image;
-      $(m).load(function(e) {f.attr('src', e.target.src);}), m.src = d.url, o.find('.mediaSimilar').removeClass('active').find('.gridItems').html('').css('height', ''), o.find('.mediaSimilar .gridItems').attr('data-id', h), s.attr('data-id', h), a.html(''), l.find('.closeupSidebar').remove(), o.find('.mediaLink').attr('href', t.source_url), o.find('.mediaSourceDomain').html(t.source_domain), o.find('.visitTrigger').attr('href', t.source_url), o.find('.mediaDescription').html(e.save.hashtagifyText(t.description)), e.analytics.trackGAPageview('User Profiles|Save Closeup|1'), this.showCloseupSavedBy(h), l.find('.authorPictureContainer').attr('href', t.user_permalink).css('background', t.user_background).find('.authorPicture').attr('src', t.user_picture['1x']), r < n ? s.addClass('isVertSmall') : s.removeClass('isVertSmall'), e.isMobile || s.css('height', n + 'px'), o.find('.mediaHeight').css('padding-bottom', 100 * u + '%'), l.find('.authorName').attr('href', t.user_permalink).html(t.user_display_name), this.buildCloseupActions(t, a), e.component.isActiveComponentRequest = !1, this.showRelatedSaves(h, !0);
-    },
-    closeupLoader: function(t, i, n) {
-      if (t && !e.component.isActiveComponentRequest) {
-        var r = this, o = function(t, n) {
-          e.component.activeComponent;
-          if (e.useHistory) if (i) {
-            var o = e.historyManager.clicksToBackground + 1, s = 'Designspiration - ' + t.description, a = t, l = e.config.BASE_URL + '/save/' + a.id + '/';
-            a.clicksToBackground = o, a.isRelatedSaveClick = n, e.historyManager.clicksToBackground = o, e.historyManager.ignoreDoubleStateChange = !0, window.history.pushState(a, s, l);
-          } else e.historyManager.clicksToBackground = Math.max(0, e.historyManager.clicksToBackground - 1);
-          r.buildCloseupTemplate(t, n);
-        };
-        r.hasRelatedFeed = !0, n ? (e.save.grid.layoutManager.scroller.off(), o(t, n)) : e.component.load({
-          component: 'save-closeup',
-          modal: 'closeupModal',
-          id: t.id,
-          data: '',
-          isRelatedClick: n,
-          callback: function(e) {o(t, n);}
-        });
-      }
-    },
-    initCloseup: function(t) {
-      if (this.addCloseupListeners(t), !t) {
-        var i = e.$app.find('.mediaWrapper'), n = e.$app.find('.mediaSimilar');
-        if (this.hasRelatedFeed = !0, n.length > 0) {
-          var r = n.find('.gridItems'), o = (e.$window, i.attr('data-id'));
-          e.save.current.id = parseInt(o), e.json.related = e.json, n.addClass('active'), e.save.grid = new e.gridLayout({
-            feed: !0,
-            variable: !0,
-            isRelated: !0,
-            widthScale: e.isMobile,
-            container: r,
-            pagination: { save_id: o, currentPage: 1, has_more: !0, page: 'related-saves' },
-            isModal: t,
-            hasContainer: !1,
-            data: e.json.data,
-            type: 'save'
-          });
-        }
-      }
-    },
-    showRelatedSaves: function(t, i) {
-      var n = i ? e.component.activeComponent : e.$app;
-      i ? e.component.activeComponent.find('.gridItemsScroller') : e.$window;
-      (n = n.find('.mediaSimilar')).length > 0 && function(t) {
-        if (t) {
-          var r = i ? e.$modal.find('.Pagination') : e.$app.find('.Pagination'), o = setTimeout(function() {new e.loader(r, 3), r.addClass('isLoader loading');}, e.component.loadDelay);
-          this.relatedAjaxPending = $.ajax({
-            url: '/resource/',
-            type: 'POST',
-            dataType: 'json',
-            data: { page: 'related-saves', page_number: 1, save_id: t, request_token: e.config.requestToken },
-            error: function(e) {},
-            success: function(r) {
-              if (r && r.data.length > 0) {
-                var o = !!i;
-                e.json.related = r;
-                var s = n.find('.gridItems[data-id="' + t + '"]');
-                n.addClass('active'), e.save.grid = new e.gridLayout({
-                  id: t,
-                  feed: !0,
-                  variable: !0,
-                  isRelated: !0,
-                  widthScale: e.isMobile,
-                  container: s,
-                  pagination: { save_id: t, currentPage: 1, has_more: !0, page: 'related-saves' },
-                  isModal: i,
-                  hasContainer: o,
-                  data: r.data,
-                  type: 'save'
-                });
-              }
-            },
-            complete: function() {r.removeClass('loading'), clearTimeout(o);}
-          });
-        }
-      }(t);
-    },
-    addCloseupListeners: function(t) {
-      var i = t ? e.component.activeComponent : e.$app;
-      t ? i.find('.modalScroller') : e.$window, i.find('.mediaWrapper');
-      new e.tags, i.on('click.modal', '.saveTrigger.isCloseup', function(t) {
-        var i = $(this), n = i.parents('.mediaWrapper'), r = n.find('.mediaImage'), o = e.save.scaleByWidth(r.height(), r.width(), e.config.gridItemWidth);
-        return e.component.load({
-          component: 'save-to-collection',
-          modal: 'saveModal',
-          id: n.attr('data-id'),
-          isCloseup: !0,
-          description: r.attr('alt'),
-          count: parseInt(n.find('.gridItemCount').text()),
-          bg: n.find('.gridItemLink').css('background-color'),
-          image: r.attr('src'),
-          height: o[0],
-          width: o[1],
-          gridItem: n,
-          trigger: i
-        }), !1;
-      }), i.on('click.modal', '.editTrigger.isCloseup', function(t) {
-        var i = $(this), n = i.parents('.mediaWrapper'), r = n.find('.mediaImage'), o = e.save.scaleByWidth(r.height(), r.width(), e.config.gridItemWidth);
-        return e.component.load({
-          component: 'edit-save',
-          modal: 'editSaveModal',
-          id: n.attr('data-id'),
-          link: i.prop('href'),
-          isCloseup: !0,
-          description: r.attr('alt'),
-          count: parseInt(n.find('.gridItemCount').text()),
-          bg: n.find('.gridItemLink').css('background-color'),
-          image: r.attr('src'),
-          height: o[0],
-          width: o[1],
-          gridItem: n,
-          trigger: i,
-          isRelatedClick: !1
-        }), !1;
-      }), i.on('click', '.signupTrigger', function(t) {
-        var i = $(this);
-        return e.component.load({ component: e.page.accessUI.component, modal: e.page.accessUI.modal, trigger: i }), !1;
-      }), i.on('click.modal', '.shareTrigger', function() {
-        var t = $(this);
-        return e.component.load({ component: 'share', modal: 'shareModal', id: t.parents('.mediaWrapper').attr('data-id'), trigger: t }), !1;
-      }), i.on('click.modal', '.reportTrigger', function() {
-        var i = $(this), n = i.parents('.mediaWrapper'), r = n.attr('data-id');
-        return e.component.load({
-          component: 'report', modal: 'reportModal', id: n.attr('data-id'), trigger: i, callback: function() {
-            var i = $(this);
-            if (!i.hasClass('disabled') && e.component.activeComponent.find('input[name=reason]').is(':checked')) {
-              var n = t ? 'modal' : 'page', o = { report_save: 1, save_id: r, request_token: e.config.requestToken };
-              i.addClass('disabled'), e.curate.report(o, 'save', n);
-            }
-            return !1;
-          }
-        }), !1;
-      });
-    },
-    resave: function(t) {
-      var i = e.component.activeComponent, n = setTimeout(function() {
-            var t = i.find('.modalStep.processing');
-            new e.loader(t), t.addClass('active loading');
-          }, e.component.loadDelay), r = i.find('.description').val(), o = t.attr('data-id'), s = t.attr('data-privacy'), a = e.component.params, l = a.id, c = a.isCloseup,
-          d = { collection_id: o, save_id: l, description: r, privacy: s, user: 1, resave: 1, request_token: e.config.requestToken };
-      t.addClass('active'), c && (d.closeup = !0), $.ajax({
-        url: '/resource/',
-        type: 'POST',
-        dataType: 'json',
-        data: d,
-        error: function(t) {clearTimeout(n), e.analytics.trackGAEvent('re_save', 'error', t.responseText), i.find('.modalStep').removeClass('active loading');},
-        success: function(r) {
-          if (clearTimeout(n), 1 === r.status) {
-            if (i.find('.modalStep.complete').addClass('active'), i.find('.modalStep').removeClass('loading'), c) {
-              var o = a.gridItem, s = a.count + 1, l = r.button, u = r.id;
-              a.isRelated ? (e.save.updateItemAction(d, r, e.component.params.isRelatedClick, 'save'), a.gridItem.attr('data-id', r.save_id)) : (o.find('.mediaWrapper').attr('data-id', u), o.find('.gridItemCount').html(s), o.find('.editTrigger').length < 1 && o.find('.mediaActions').prepend(l)), a.gridItem.attr('data-id', r.save_id);
-            } else e.save.updateItemAction(d, r, e.component.params.isRelatedClick, 'save'), a.gridItem.attr('data-id', r.save_id);
-            e.component.hide(1200), e.analytics.trackGAEvent('re_save', 'success', 'save_modal');
-          } else i.find('.modalStep').removeClass('active loading'), e.setButtonRateLimit(function() {t.removeClass('disabled');}), e.analytics.trackGAEvent('re_save', 'failed', r.error);
-        }
-      });
-    },
-    updateItemAction: function(t, i, n, r) {
-      var o = t.save_id, s = (i.save_id, n ? e.json.related.data : e.json.data);
-      for (var a in s) if (s[a].id == o) {
-        s[a].description = t.description, 'save' === r && (s[a].has_saved || (s[a].resaves += 1), s[a].has_saved = !0, s[a].id = parseInt(i.save_id));
-        break;
-      }
-    },
-    websave: function(t) {
-      var i = e.component.activeComponent, n = 'save_from_website', r = setTimeout(function() {
-            var t = i.find('.modalStep.processing');
-            new e.loader(t), t.addClass('active loading');
-          }, e.component.loadDelay), o = i.find('.description').val(), s = e.component.params.link, a = e.component.params.image, l = t.attr('data-id'), c = (t.attr('data-privacy'), e.component.params),
-          d = c.id;
-      t.addClass('active'), $.ajax({
-        url: '/resource/',
-        type: 'POST',
-        dataType: 'json',
-        data: { collection_id: l, save_id: d, description: o, media_url: a, page_url: s, user: 1, websave: 1, request_token: e.config.requestToken },
-        error: function(t) {clearTimeout(r), e.analytics.trackGAEvent(n, 'error', t.responseText), i.find('.modalStep').removeClass('active loading');},
-        success: function(o) {
-          if (clearTimeout(r), 1 === o.status) {
-            var s = !0 === c.isCloseup ? 'Closeup' : '';
-            i.find('.modalStep.complete').addClass('active'), i.find('.modalStep').removeClass('loading'), c.gridItem.attr('data-id', o.save_id), c.trigger.next('.gridItemCount').html(c.count + 1), c.trigger.removeClass('saveTrigger' + s + ' blue').addClass('editTrigger' + s + ' grey').text('Edit'), e.component.hide(1200), e.analytics.trackGAEvent(n, 'success', 'save_modal');
-          } else i.find('.modalStep').removeClass('active loading'), e.setButtonRateLimit(function() {t.removeClass('disabled');}), e.analytics.trackGAEvent(n, 'failed', o.error);
-        }
-      });
-    },
-    bookmarkletSave: function(t) {
-      var i = e.component.activeComponent, n = 'save_from_bookmarklet', r = setTimeout(function() {
-        var t = i.find('.modalStep.processing');
-        new e.loader(t), t.addClass('active loading');
-      }, e.component.loadDelay), o = i.find('.description').val(), s = e.data, a = s.url, l = s.media, c = t.attr('data-id'), d = (t.attr('data-privacy'), s.id);
-      t.addClass('active'), $.ajax({
-        url: '/resource/',
-        type: 'POST',
-        dataType: 'json',
-        data: {
-          user: 1,
-          bookmarklet_save: 1,
-          save_id: d,
-          collection_id: c,
-          description: o,
-          source_image: encodeURIComponent(l),
-          source_url: encodeURIComponent(a),
-          request_token: e.config.requestToken
-        },
-        error: function(t) {clearTimeout(r), e.analytics.trackGAEvent(n, 'error', t.responseText), i.find('.modalStep').removeClass('active loading');},
-        success: function(o) {clearTimeout(r), 1 === o.status ? (i.find('.modalStep.complete').addClass('active'), i.find('.modalStep').removeClass('loading'), window.opener.postMessage(d + '_' + o.save_id, a), setTimeout(function() {window.close();}, 1200), e.analytics.trackGAEvent(n, 'success', 'save_modal')) : (i.find('.modalStep').removeClass('active loading'), e.setButtonRateLimit(function() {t.removeClass('disabled');}), e.analytics.trackGAEvent(n, 'failed', o.error));}
-      });
-    },
-    edit: function(t) {
-      var i = e.component.activeComponent, n = setTimeout(function() {
-            var t = i.find('.modalStep.processing');
-            new e.loader(t), t.addClass('active loading');
-          }, e.component.loadDelay), r = e.component.params.id, o = i.find('.description').val(), s = i.find('.website').val(), a = i.find('.item.active'), l = a.attr('data-id'),
-          c = (a.attr('data-privacy'), { save_id: r, collection_id: l, description: o, website: s, user: 1, edit_save: 1, request_token: e.config.requestToken });
-      t.addClass('active'), $.ajax({
-        url: '/resource/',
-        type: 'POST',
-        dataType: 'json',
-        data: c,
-        error: function(t) {clearTimeout(n), e.analytics.trackGAEvent('edit_save', 'error', t.responseText), i.find('.modalStep').removeClass('active loading');},
-        success: function(r) {clearTimeout(n), 1 === r.status ? (e.save.updateItemAction(c, r, e.component.params.isRelatedClick), i.find('.modalStep.complete').addClass('active'), i.find('.modalStep').removeClass('loading'), e.component.hide(1200), e.analytics.trackGAEvent('edit_save', 'success', 'save_modal')) : (e.validate.form(i.find('.meta.column'), r.error), i.find('.modalStep').removeClass('active loading'), e.setButtonRateLimit(function() {t.removeClass('disabled');}), e.analytics.trackGAEvent('edit_save', 'failed', r.error)), e.component.setPosition();}
-      });
-    },
-    _delete: function(t) {
-      var i = e.component.activeComponent, n = setTimeout(function() {
-        var t = i.find('.modalStep.processing');
-        new e.loader(t), t.addClass('active loading');
-      }, e.component.loadDelay);
-      t.addClass('active'), $.ajax({
-        url: '/resource/',
-        type: 'POST',
-        dataType: 'json',
-        data: { save_id: e.component.params.id, user: 1, delete_save: 1, request_token: e.config.requestToken },
-        error: function(t) {clearTimeout(n), e.analytics.trackGAEvent('delete_save', 'error', t.responseText), i.find('.modalStep').removeClass('active loading');},
-        success: function(r) {
-          if (clearTimeout(n), 1 === r.status) {
-            var o = i.find('.modalStep.complete');
-            i.find('.modalStep').removeClass('loading'), o.find('.completeMessage').html(e.component.messages.DELETED), o.addClass('active'), e.analytics.trackGAEvent('delete_save', 'success', 'save_modal'), e.component.hide(1200), e.redirect(r.redirect, 50);
-          } else i.find('.modalStep').removeClass('active loading'), e.setButtonRateLimit(function() {t.removeClass('disabled');}), e.analytics.trackGAEvent('delete_save', 'failed', r.error);
-        }
-      });
-    },
-    loadModal: function(t) {
-      var i = e.component.params, n = i.id;
-      if (!n) return !1;
-      var r = e.component.activeComponent, o = r.find('.collectionsContainer'), s = setTimeout(function() {o.addClass('isLoader loading'), new e.loader(o, 2);}, e.component.loadDelay),
-          a = { user: 1, request_token: e.config.requestToken }, l = r.find('.display').outerHeight(), c = Math.max(20, .5 * (l - i.height)), d = Math.min(i.height, l - 40),
-          u = r.find('.displayItem');
-      u.css({ 'background-color': i.bg, 'background-image': 'url(' + i.image + ')', height: d + 'px', top: c + 'px' }), u.prev('.displayBackground').css({
-        'background-color': i.bg,
-        'background-image': 'url(' + i.image + ')'
-      }), a.save_id = n, t ? a.edit_save_details = 1 : (a.user = 1, a.resave_details = 1, r.find('.description').val(i.description)), $.ajax({
-        url: '/resource/',
-        type: 'POST',
-        dataType: 'json',
-        data: a,
-        error: function(t) {clearTimeout(s), o.removeClass('loading'), e.analytics.trackGAEvent('load_save', 'error', t.responseText);},
-        success: function(n) {
-          if (clearTimeout(s), 1 === n.status) {
-            if (r.find('.collections').html(n.collections), t) {
-              var a = r.find('.website');
-              r.find('.description').val(n.description), n.website ? a.val(n.website) : (a.parents('.meta').addClass('noWebsite'), a.parent().remove()), r.find('.deleteTrigger').parent().addClass('isEdit');
-            } else r.find('.mediaDescription').val(i.description), n.has_saved && r.find('.descriptionContainer').before(n.has_saved);
-            e.component.setPosition(), e.analytics.trackGAEvent('load_save', 'success', 'save_modal');
-          } else e.analytics.trackGAEvent('load_save', 'failed', n.error);
-          o.removeClass('loading');
-        }
-      });
-    },
-    loadModalBookmarklet: function(t) {
-      var i = e.data, n = e.save.activeComponent, r = n.find('.collectionsContainer'), o = setTimeout(function() {r.addClass('isLoader loading'), new e.loader(r, 2);}, e.component.loadDelay),
-          s = { user: 1, request_token: e.config.requestToken }, a = n.find('.display').outerHeight(), l = this.scaleByWidth(i.height, i.width, 236)[0], l = Math.min(l, a - 40),
-          c = Math.max(20, .5 * (a - l)), d = n.find('.displayItem');
-      l > a - 40 && d.find('.expandItemWrapper').addClass('collapsed'), d.css({
-        'background-color': i.bg,
-        'background-image': 'url(' + i.media + ')',
-        height: l + 'px',
-        top: c + 'px'
-      }), d.prev('.displayBackground').css({
-        'background-color': i.bg,
-        'background-image': 'url(' + i.media + ')'
-      }), s.user = 1, s.collections = 1, n.find('.description').val(i.description), $.ajax({
-        url: '/resource/',
-        type: 'POST',
-        dataType: 'json',
-        data: s,
-        error: function(t) {clearTimeout(o), r.removeClass('loading'), e.analytics.trackGAEvent('load_save', 'error', t.responseText);},
-        success: function(t) {clearTimeout(o), 1 === t.status ? (n.find('.collections').html(t.collections), e.analytics.trackGAEvent('load_save', 'success', 'save_modal')) : e.analytics.trackGAEvent('load_save', 'failed', t.error), r.removeClass('loading');}
-      });
-    },
-    scaleByWidth: function(e, t, i) {
-      e = parseInt(e);
-      var n = i / (t = parseInt(t)), r = e, o = t;
-      return t > i && (r = Math.round(e * n), o = i), [r, o];
-    }
-  };
-}(App), function(e) {
-  function t(t, i, n, r) {
-    var o, s = e.config.gridItemWidth, a = .4, l = i.gutter;
-    if (this.id = 9999999 * Math.random(), this.type = i.type, this.options = i, this.container = t, this.hasContainer = i.hasOwnProperty('hasContainer') && !0 === i.hasContainer, this.scroller = this.hasContainer ? t.parents('.gridItemsScroller') : e.$window, this.eventNamespace = i.isRelated ? '.related' : '.grid', this.order = [], this.childrenItemInfo = {}, this.columnLengths = [], this.columns = i.minCols, this.minCols = i.minCols, this.containerWidth = 0, this.pendingRequest = !1, this.request = !1, e.save.relatedAjaxPending) return !1;
-    if (r.feed) {
-      var c = !1;
-      r.hasOwnProperty('pagination') ? c = r.pagination : 'undefined' != typeof PaginationParams && (c = PaginationParams), this.pagination = new e.pagination(c, t);
-    }
-    this.pagination.loading = !0, i.isRelated && i.isModal && this.buildGridChildren(n), this.children = t.children(), this.hasItems() && (e.isMobile && (s -= 20), i.isFixedItem && (s = i.isFixedItem.width, a = i.isFixedItem.scale, l = i.isFixedItem.gutter), o = s, i.widthScale && (o = s + 5 * Math.round(s * a / 5)), this.widthScale = i.widthScale, this.gutter = l, this.minItemWidth = s + l, this.maxItemWidth = o + l, this.setDimensions(), this.prepareGridChildren(!0), this.addListeners(), this.onGridItemsLayoutComplete('initialize grid'));
-  }
 
-  var i = {
-    getNumColumnsInContainer: function(t) {
-      var i = e.config.gridItemWidth + this.gutter, n = t.parents('.singleColumn').outerWidth();
-      return Math.min(Math.max(Math.floor(n / i), this.minCols), e.config.gridMaxColumns);
-    }, updateNumColumns: function() {e.$window.trigger('onBodyColumnsChanged');}
-  };
-  $.extend(e.columnManager, i);
-  var n = function() {this.top = null, this.bottom = null, this.height = null, this.scale = null, this.columnIndex = null, this.promoted = !1, this.hasListeners = !1, this.hasSentImpression = !1;};
-  n.prototype = {
-    setScale: function(e, t, i) {this.scale = Math.min(e.gridItemWidth * (t / i), e.gridItemMaxHeight) / e.gridItemWidth;},
-    calculateHeight: function() {this.height = this.itemWrapper.height();},
-    setHeight: function(e, t) {t && (e += 23), this.height = e;},
-    build: function(t, i) {
-      if ('save' === t.type) {
-        var n = 'undefined' !== t.promoted && t.promoted, r = (E = t.images)['1x'], o = [r.url + ' 1x', E['2x'].url + ' 2x'];
-        n || o.push(E['3x'].url + ' 3x'), o = o.join(', '), n && (t.promoted = n, t.token = t.token), this.setScale(e.config, r.h, r.w);
-        var s;
-        s = e.isMobile ? this.scale * i : this.scale * e.config.gridItemWidth, this.setHeight(Math.floor(s), n);
-        I = e.create({ DIV: { className: 'gridItem save' + (n ? ' promoted' : '') } });
-        e.set(I, 'data-id', t.id), e.set(I, 'data-s', this.scale);
-        var a = e.create({ DIV: { className: 'gridItemWrapper' } }), l = e.create({ DIV: { className: 'gridItemInnerWrap' } }),
-            c = e.create({ DIV: { className: 'gridImageHeight', style: 'padding-bottom:' + 100 * this.scale + '%;' } });
-        gridItemUrl = n ? t.click_url : '/save/' + t.id + '/';
-        var d = e.create({ DIV: { className: 'gridItemCover' } }), u = e.create({ IMG: { alt: t.description, className: 'gridItemImage', src: r.url, srcset: o } }),
-            p = { className: 'gridItemLink', href: gridItemUrl, style: 'background-color:' + t.background + ';' };
-        if (n) {
-          var h = e.create({ DIV: { className: 'promotedBy', innerHTML: 'Promoted by <span>' + t.promoted.advertiser + '</span>' } });
-          p.target = '_blank', p.rel = 'nofollow';
-        }
-        return p = e.create({ A: p }), n || c.appendChild(d), c.appendChild(u), p.appendChild(c), l.appendChild(p), n && l.appendChild(h), a.appendChild(l), I.appendChild(a), I;
-      }
-      if ('collection' === t.type) {
-        I = e.create({ DIV: { className: 'gridItem collection' } });
-        e.set(I, 'data-id', t.id);
-        var a = e.create({ DIV: { className: 'gridItemWrapper' } }), l = e.create({ DIV: { className: 'gridItemInnerWrap' } }),
-            f = e.create({ DIV: { className: 'gridItemDisplay', style: 'background-color:' + t.background + ';' } }), p = e.create({ A: { className: 'gridItemLink', href: t.url } }),
-            m = e.create({ DIV: { className: 'detail' + (t.is_search ? ' search' : '') } }),
-            g = (e.create({ A: { className: 'name', href: t.url, innerHTML: t.name } }), e.create({ SPAN: { className: 'icons' } })), v = e.create({ DIV: { className: 'thumbs' } }),
-            y = e.create({ DIV: { className: 'cover', innerHTML: '<div class="dim"></div>' } });
-        e.hasOwnProperty(t.cover, '1x') && (y.style = 'background-image:url(' + t.cover['2x'] + ');');
-        for (var b = 0; b < 2; b += 1) {
-          var w = e.create({ DIV: { className: 'thumb', innerHTML: '<div class="dim"></div>' } }), x = t.thumbs[b];
-          x && e.hasOwnProperty(x, '2x') && (e.isMobile ? w.style = 'background-image:url(' + x['1x'] + ');' : w.style = 'background-image:url(' + x['2x'] + ');'), v.appendChild(w);
-        }
-        if (p.appendChild(y), p.appendChild(v), f.appendChild(p), e.json.page.user.is_my_profile) {
-          var C = e.create({ SPAN: { className: 'rearrange', innerHTML: 'Drag to Arrange' } });
-          f.appendChild(C);
-        }
-        l.appendChild(f), a.appendChild(l), t.is_private && g.appendChild(e.create({ SPAN: { className: 'private' } })), t.is_collab && g.appendChild(e.create({ SPAN: { className: 'collab' } }));
-        $ = e.create({ A: { className: 'name', href: t.url, innerHTML: t.name } });
-        if (t.is_search) {
-          var T = e.create({ DIV: { className: 'owner' } }), k = e.create({ DIV: { className: 'ownerImageContainer' } }),
-              _ = e.create({ IMG: { alt: 'Explore ' + t.description + ' &rsquo;s Profile', className: 'ownerImage', src: t.owner_image['1x'] } }),
-              S = e.create({ A: { className: 'ownerName', href: t.owner_url, innerHTML: t.owner_name } });
-          k.appendChild(_), T.appendChild(k), T.appendChild($), T.appendChild(S), m.appendChild(T);
-        } else m.appendChild($), m.appendChild(g);
-        return a.appendChild(m), I.appendChild(a), I;
-      }
-      if ('people' === t.type) {
-        var E = t.images, o = [E['1x'] + ' 1x', E['2x'] + ' 2x'].join(', '), I = e.create({ DIV: { className: 'gridItem people' } });
-        e.set(I, 'data-id', t.id);
-        var a = e.create({ DIV: { className: 'gridItemWrapper' } }), f = e.create({ DIV: { className: 'gridItemDisplay' } }),
-            A = e.create({ A: { className: 'imageContainer', href: t.url, style: 'background-color:' + t.background + ';' } }),
-            D = e.create({ IMG: { alt: 'Explore ' + t.display_name + '&rsquo;s Profile', className: 'image', src: E['1x'], srcset: o } }),
-            $ = e.create({ A: { className: 'name', href: t.url, innerHTML: t.display_name } }), P = e.json.page.user;
-        if (A.appendChild(D), f.appendChild(A), f.appendChild($), !t.is_my_profile) {
-          var M = e.create({ DIV: { className: 'gridItemActions' } }), L = e.create({ BUTTON: { className: 'profileSignup button blue', innerHTML: '<span>Follow</span>' } });
-          if (P.isLoggedIn) {
-            var O;
-            t.is_following ? (O = 'profileUnfollow button grey', L.innerHTML = '<span>Unfollow</span>') : O = 'profileFollow button blue', L.className = O;
-          }
-          e.set(L, 'data-url', t.url), M.appendChild(L), f.appendChild(M);
-        }
-        return a.appendChild(f), I.appendChild(a), I;
-      }
-      if ('interest' === t.type) {
-        I = e.create({ DIV: { className: 'gridItem interest' + (t.is_following ? ' active' : '') } });
-        e.set(I, 'data-id', t.id);
-        var a = e.create({ DIV: { className: 'gridItemWrapper' } }), f = e.create({ DIV: { className: 'gridItemDisplay' } }), N = e.create({ DIV: { className: 'interestName', innerHTML: t.name } });
-        return f.appendChild(N), a.appendChild(f), I.appendChild(a), I;
-      }
-    }
-  }, t.prototype = {
-    addListeners: function() {
-      var t = this;
-      e.hasOwnProperty(e[t.type], 'addGridItemListeners') && e[t.type].addGridItemListeners(t), this.scroller.on('scroll.inviewport', _.throttle(function() {e.hasOwnProperty(e[t.type], 'addGridItemListeners') && e[t.type].addGridItemListeners(t);}, 200)), e.$window.on('onBodyColumnsChanged' + t.eventNamespace, _.debounce(function() {t.repositionGridChildren();}, 200)), this.addScrollListeners(), e.isMobile || e.$window.on('scroll.scrolltop', _.throttle(function() {e.browser.showScrollTop($('body,html'), e.$body, e.browser.getScrollPosition());}, 500));
-    },
-    addScrollListeners: function() {
-      var e = this;
-      e.scroller.off('scroll.scrollmonitor'), e.scroller.on('scroll.scrollmonitor', _.throttle(function() {e.onScrollLoadGrid();}, 300));
-    },
-    onScrollLoadGrid: function() {
-      if (this.pagination.isLoading()) return !1;
-      this.askMoreGridItems();
-    },
-    onBeforeGridItemsLoad: function(e, t) {this.pagination.showLoader(!1);},
-    onGridItemsLayoutComplete: function(t) {
-      var i = this.type;
-      e.hasOwnProperty(e[i], 'addGridItemListeners') && e[i].addGridItemListeners(this), this.pagination.loading = !1, this.askMoreGridItems();
-    },
-    needsMoreGridItemsInViewport: function() {return this.getYOffset() + this.getFilledHeight() < e.browser.getScrollPosition() + e.browser.height;},
-    askMoreGridItems: function() {
-      if (!this.pagination.loading) if (this.pagination.hasMoreItems()) if (this.needsMoreGridItemsInViewport()) this.getMoreGridItems(!0); else {
-        var t, i, n, r, o;
-        this.hasContainer ? (i = (t = this.scroller.scrollTop()) > this.pagination.lastScrollTop, n = this.scroller.height(), r = this.container.parents('.content').height()) : (i = (t = e.browser.getScrollPosition()) > this.pagination.lastScrollTop, n = e.browser.height, r = this.getYOffset() + this.getFilledHeight()), o = Math.max(r - n - t, 0), this.pagination.lastScrollTop = t, o < this.pagination.settings.distance && i && this.getMoreGridItems(!0);
-      } else this.pagination.showPagination();
-    },
-    cancelPreviousRequest: function() {this.pendingRequest && (this.pendingRequest.onreadystatechange = function() {}, this.pendingRequest.abort());},
-    getMoreGridItems: function() {
-      var t = this;
-      if (t.pagination.loading) return !1;
-      if (t.pagination.hasMoreItems()) {
-        var i = t.pagination.settings.hasOwnProperty('page') ? t.pagination.settings.page : e.pageName;
-        t.pagination.loading = !0, t.pagination.showLoader(!0), t.pagination.settings.current++, t.request = {
-          page: i,
-          url: window.location.pathname,
-          uri: window.location.href,
-          page_number: t.pagination.settings.current,
-          request_token: e.config.requestToken,
-          show_promoted: !1
-        }, e.ads && (t.request.show_promoted = e.ads.active), t.options.isRelated && (t.request.save_id = t.pagination.settings.save_id), $.ajax({
+      function n(t) {
+        $.ajax({
           url: '/resource/',
           type: 'POST',
-          dataType: 'json',
-          data: t.request,
-          error: function(e) {t.pendingRequest = !1, t.handleNewGridItems(!1);},
-          success: function(i, n) {void 0 !== i && (t.options.isRelated ? parseInt(i.save_id) === e.save.current.id && (t.pendingRequest = !1, t.handleNewGridItems(i.data)) : (t.pendingRequest = !1, t.handleNewGridItems(i.data)));}
+          data: t,
+          success: function(t) {t.error ? e.$body.find('.socialAuthError').addClass('active').html(t.error) : (e.$body.find('.socialAuthError').removeClass('active'), e.redirect(t.location, 100));}
         });
       }
-    },
-    setDimensions: function() {this.resetContainerWidth(), this.setContainerWidth(), this.columns = this.calculateNumColumns(), this.setItemOuterWidth(), this.setItemInnerWidth();},
-    resetContainerWidth: function() {this.container.css('width', '');},
-    setContainerWidth: function() {
-      var t;
-      t = e.isMobile ? this.container.innerWidth() : e.browser.width, this.options.hasContainer && (t = e.isMobile ? this.container.innerWidth() : this.container.width()), this.containerWidth = Math.max(this.minCols * this.minItemWidth, t);
-    },
-    setItemOuterWidth: function() {this.itemOuterWidth = Math.min(Math.floor(this.containerWidth / this.columns), this.maxItemWidth);},
-    setItemInnerWidth: function() {e.isMobile ? this.itemInnerWidth = this.itemOuterWidth - this.gutter : this.itemInnerWidth = this.itemOuterWidth;},
-    setScaleRatio: function() {return e.isMobile ? this.minItemWidth / this.itemInnerWidth : this.minItemWidth / this.itemOuterWidth;},
-    buildGridChildren: function(e) {
-      if (e) for (var t = 0; t < e.length; t += 1) {
-        var i = e[t], r = new n, o = $(r.build(i));
-        r.itemWrapper = o, this.container.append(o);
+
+      function r(t) {
+        $.holdReady(!0), $.getScript('https://connect.facebook.net/en_US/sdk.js', function() {
+          $.holdReady(!1), e[t + 'WithFacebook'] = function() {
+            return FB.login(function(i) {
+              if (i.authResponse) {
+                var r = { request_token: e.config.requestToken };
+                r['facebook_' + t] = 1, n(r);
+              }
+            }, { scope: 'email,public_profile', return_scopes: !0 }), !1;
+          }, window.fbAsyncInit = function() {FB.init({ appId: e.config.fb_auth_app_id, cookie: !0, version: e.config.fb_graph_version });};
+        });
       }
-    },
-    arrayToObject: function(e) {
-      var t = {}, i = e.length, n = 0;
-      for (n; n < i; n += 1) void 0 !== e[n] && (t[e[n].id] = e[n]);
-      return t;
-    },
-    prepareGridChildren: function(t) {
-      var i, r;
-      i = this.options.isRelated ? e.json.related.data : e.json.data, r = this.arrayToObject(i);
-      for (var o = 0; o < this.children.length; o += 1) {
-        var s = this.children[o], a = new n, l = s.getAttribute('data-id'), c = r[l], d = !1;
-        if (a.id = l, a.itemWrapper = $(s), c) {
-          if (a.promoted = c.promoted, d = c.promoted, a.promoted && !e.ads.active) continue;
-          c.promoted && (a.token = c.token);
-        }
-        this.options.isVariable ? (a.scale = parseFloat(s.getAttribute('data-s')), e.isMobile ? a.setHeight(Math.floor(a.scale * this.itemInnerWidth), c.promoted) : a.setHeight(Math.floor(a.scale * e.config.gridItemWidth), c.promoted)) : (this.itemHeight || (this.itemHeight = a.itemWrapper.find('.gridItemWrapper').innerHeight()), a.setHeight(this.itemHeight, d)), this.childrenItemInfo[l] = a, this.positionItem(a), this.order.push(l);
-      }
-      this.updateContainerDimension();
-    },
-    buildItems: function(t) {
-      for (var i = 0; i < t.length; i += 1) {
-        var r, o = t[i], s = new n;
-        r = e.isMobile ? $(s.build(o, this.itemInnerWidth)) : $(s.build(o)), s.id = o.id, s.itemWrapper = r, s.promoted = o.promoted, s.promoted && !e.ads.active || (o.promoted && (s.token = o.token), 'collection' !== o.type && 'people' !== o.type && 'interest' !== o.type || s.setHeight(this.itemHeight), s = this.positionItem(s), this.childrenItemInfo[o.id] = s, this.order.push(o.id), this.container.append(r));
-      }
-      this.updateContainerDimension();
-    },
-    positionItem: function(e) {
-      if (0 === this.columnLengths.length) {
-        if (this.itemWidth !== this.itemOuterWidth) {
-          var t = e.itemWrapper.find('.gridItemWrapper'), i = t.css('margin-top'), n = t.css('padding-top'), r = t.css('margin-bottom'), o = t.css('padding-bottom');
-          this.topItemMargin = parseInt(i, 10) + parseInt(n, 10), this.bottomItemMargin = parseInt(r, 10) + parseInt(o, 10), this.itemWidth = this.itemOuterWidth;
-        }
-        this.columnLengths = new Array(this.columns), this.setShortestColumnIndex();
-      }
-      return this.positionItemInColumn(e, this.shortestColumnIndex);
-    },
-    positionItemInColumn: function(t, i) {
-      i = Math.max(0, i), i = Math.min(this.columnLengths.length - 1, i);
-      var n = this.columnLengths[i], r = t.height + this.topItemMargin + this.bottomItemMargin + n, o = { visibility: 'visible' };
-      return this.options.isVariable && (o.width = e.isMobile ? this.itemOuterWidth : this.itemInnerWidth, o.top = n + 'px', o.left = i * this.itemWidth + 'px'), t.itemWrapper.css(o), t.top = n, t.bottom = r, t.columnIndex = i, this.columnLengths[i] = r, this.setShortestColumnIndex(), t;
-    },
-    updateGridChildren: function() {this.children = this.container.children(), this.numItemsOnLastPage = this.children.length;},
-    setShortestColumnIndex: function() {
-      this.shortestColumnIndex = 0;
-      for (var e = 0; e < this.columnLengths.length; e += 1) this.columnLengths[e] = this.columnLengths[e] || 0, this.columnLengths[e] < this.columnLengths[this.shortestColumnIndex] && (this.shortestColumnIndex = e);
-    },
-    updateContainerDimension: function() {this.container.css({ height: Math.max.apply(Math, this.columnLengths) + 'px' }), e.browser.cacheDimensions();},
-    hasItems: function() {return this.children.length && this.children.length > 0 && 'DIV' === this.children[0].nodeName;},
-    updateJson: function(t) {this.options.isRelated ? e.json.related.data = e.json.related.data.concat(t) : e.json.data = e.json.data.concat(t);},
-    handleNewGridItems: function(t) {
-      if (this.pendingRequest) return !1;
-      this.onBeforeGridItemsLoad('handleNewGridItems'), t && t.length > 0 ? (this.pagination.settings.has_more = !0, this.updateJson(t), e.isMobile ? this.buildItems(t, this.itemInnerWidth) : this.buildItems(t), this.pagination.handleScrollImpression()) : this.pagination.settings.has_more = !1, this.updateGridChildren(t.length), this.onGridItemsLayoutComplete('handleNewGridItems');
-    },
-    positionGridChildren: function() {
-      for (var e = 0; e < this.children.length; e += 1) {
-        var t = this.children[e].getAttribute('data-id');
-        this.positionItem(this.childrenItemInfo[t]);
-      }
-      this.updateContainerDimension();
-    },
-    repositionGridChildren: function() {
-      this.columns;
-      this.setDimensions(), this.columnLengths = [];
-      for (var t = 0; t < this.order.length; t += 1) {
-        var i = this.childrenItemInfo[this.order[t]];
-        e.isMobile && i.setHeight(Math.floor(i.scale * this.itemInnerWidth), i.promoted), this.positionItem(i);
-      }
-      this.updateContainerDimension(), this.onGridItemsLayoutComplete('repositionGridChildren');
-    },
-    repositionItemsInColumn: function(e) {
-      this.columnLengths[e] = 0;
-      var t = _.filter(this.childrenItemInfo, function(t) {return t.columnIndex === e;});
-      t = _.sortBy(t, function(e) {return e.top;}), _.each(t, function(t) {this.positionItemInColumn(t, e);}.bind(this)), this.updateContainerDimension();
-    },
-    calculateNumColumns: function() {
-      var t;
-      return t = this.widthScale && !e.isMobile ? Math.max(Math.round(this.containerWidth / this.minItemWidth), Math.floor(this.containerWidth / this.maxItemWidth)) : Math.max(Math.floor(this.containerWidth / this.minItemWidth), Math.floor(this.containerWidth / this.maxItemWidth)), Math.max(this.minCols, t);
-    },
-    inViewport: function(e, t) {
-      var i = e.height, n = t.offset + e.top, r = n + i, o = t.top, s = t.bottom;
-      if (e.promoted) {
-        var a;
-        t.height;
-        return r <= s && n >= o || (a = .2 * i, s - a >= n && r - a > o);
-      }
-      return r > o && n < s;
-    },
-    updateGridItemHeight: function(e) {this.childrenItemInfo[e].calculateHeight();},
-    getGridItemColumn: function(e) {return this.childrenItemInfo[e] ? this.childrenItemInfo[e].columnIndex : 0;},
-    getFilledHeight: function() {return this.options.isVariable ? this.columnLengths[this.shortestColumnIndex] : Math.max.apply(Math, this.columnLengths);},
-    getYOffset: function() {return this.yOffset ? this.yOffset : this.yOffset = this.container.offset().top || 0;}
-  }, e.gridLayout = function(i) {
-    var n = i.container || e.$app.find('.gridItems'), r = {
-      minCols: e.isMobile ? 1 : e.config.gridMinColumns,
-      maxCols: e.config.gridMaxColumns,
-      hasContainer: i.hasContainer || !1,
-      widthScale: i.widthScale || !1,
-      isRelated: i.isRelated || !1,
-      isVariable: i.variable,
-      isModal: i.isModal || !1,
-      isFixedItem: i.isFixedItem,
-      gutter: i.isFixedItem ? i.isFixedItem.gutter : e.config.gridItemGutter,
-      type: i.type
-    }, o = !!i.isRelated && i.data;
-    this.id = i.id, this.layoutManager = new t(n, r, o, i);
-  };
-}(App), function(e) {
-  var t = {
-    EDIT_BTN: { classes: 'editTrigger', text: 'Edit' },
-    FOLLOWING_BTN: { classes: 'collectionUnfollow', text: 'Unfollow' },
-    FOLLOW_BTN: { classes: 'collectionFollow', text: 'Follow' },
-    SIGNUP_BTN: { classes: 'signupTrigger', text: 'Follow' }
-  };
-  e.collection = {
-    current: {},
-    validateForm: {
-      create: function(t) {
-        var i = t.find('.collectionName').val(), n = t.find('.createTrigger');
-        return '' !== $.trim(i) ? (e.validate.form(t), n.removeClass('disabled'), !0) : (e.validate.form(t, { name: 'Name required' }), n.addClass('disabled'), !1);
-      }, edit: function() {return !0;}
-    },
-    init: function() {this.addListeners(), this.starterFunctions();},
-    addListeners: function() {
-      var t = e.$app;
-      e.config.isLoggedIn ? (t.on('click', '.createTrigger', function() {
-        $(this).parent();
-        return e.component.load({ component: 'create-collection', modal: 'createCollectionModal' }), !1;
-      }), t.find('.CollectionHeader').on('click', '.editTrigger', function() {
-        var t = $(this), i = t.parent();
-        return e.component.load({ component: 'edit-collection', modal: 'editCollectionModal', id: i.attr('data-id'), link: t.attr('data-url') }), !1;
-      }), t.on('click', '.collectionFollow', function() {
-        var t = $(this);
-        return t.hasClass('disabled') || e.collection.follow(t), !1;
-      }), t.on('click', '.collectionUnfollow', function() {
-        var t = $(this);
-        return t.hasClass('disabled') || e.collection.unfollow(t), !1;
-      })) : (t.on('click', '.signupTrigger', function(t) {
-        return e.component.load({
-          component: e.page.accessUI.component,
-          modal: e.page.accessUI.modal,
-          trigger: $(this)
-        }), !1;
-      }), t.on('click', '.profileSignup', function(t) {return e.component.load({ component: e.page.accessUI.component, modal: e.page.accessUI.modal, trigger: $(this) }), !1;}));
-    },
-    addGridItemListeners: function(t) {
-      if (e.isMobile) return !1;
-      var i = t.order.length, n = 0;
-      for (n; n < i; n += 1) {
-        var r = t.order[n], o = t.childrenItemInfo[r], s = o.itemWrapper, a = s.find('.gridItemInnerWrap');
-        a.find('.gridItemLink');
-        t.inViewport(o, t.container.offset().top) ? (a.on('mouseenter.gridItemInnerWrap', function() {e.collection.buildGridActions($(this));}).on('mouseleave.gridItemInnerWrap', function() {$(this).find('.gridItemActions,.gridItemGradient').remove();}), s.addClass('inView')) : (s.removeClass('inView'), a.off('mouseenter.gridItemInnerWrap'), a.off('mouseleave.gridItemInnerWrap').find('.gridItemActions,.gridItemGradient').remove());
-      }
-    },
-    buildGridActions: function(i) {
-      var n = e.json, r = n.data, o = i.parents('.gridItem');
-      if (i.find('.gridItemActions').length < 1) {
-        var s = o.attr('data-id'), a = i.find('.gridItemLink').attr('href');
-        if (!s) return;
-        var l, c, d = _.filter(r, function(e) {return e.id === parseInt(s);})[0];
-        n.page.user.isLoggedIn ? d.is_collaborator ? (l = t.EDIT_BTN.classes, c = t.EDIT_BTN.text) : d.is_following ? (l = t.FOLLOWING_BTN.classes, c = t.FOLLOWING_BTN.text) : d.is_following || (l = t.FOLLOW_BTN.classes, c = t.FOLLOW_BTN.text) : (l = t.SIGNUP_BTN.classes, c = t.SIGNUP_BTN.text), html = '<button type="button" data-url="' + a + '" class="' + l + '"><span>' + c + '</span></button>', html = '<div class="gridItemActions">' + html + '</div>', i.find('.gridItemDisplay').prepend(html);
-      }
-    },
-    updateAllGridActions: function(t) {
-      var i = e.json.data;
-      for (var n in i) 'follow' === t ? i[n].is_following = !0 : 'unfollow' === t && (i[n].is_following = !1);
-    },
-    updateItemAction: function(t, i) {
-      var n = t.parents('.gridItem').attr('data-id'), r = e.json.data;
-      for (var o in r) if (r[o].id == n) {
-        'follow' === i ? r[o].is_following = !0 : 'unfollow' === i && (r[o].is_following = !1);
-        break;
-      }
-    },
-    starterFunctions: function() {e.$app.hasClass('ownsProfile') && !e.isMobile && this.organizer();},
-    organizer: function() {
-      var t = e.$app.find('.sort');
-      if (!(t.length < 1)) {
-        var i = !1, n = 0, r = function() {
-          var e = [];
-          return t.find('.collection').each(function(t) {
-            var i = $(this).attr('data-id');
-            void 0 !== i && e.push(i);
-          }), e;
-        };
-        t.sortable({
-          cursor: 'move',
-          placeholder: 'gridItem collection placeholder',
-          items: '.collection:not(.newGridContent)',
-          revert: 180,
-          tolerance: 'pointer',
-          helper: 'clone',
-          start: function(e, t) {
-            var o = $(t.item), s = (o.width(), o.attr('data-id'));
-            t.placeholder.html('<div class="gridItemWrapper"><div class="gridItemDisplay"><div class="gridItemLink"></div></div><div class="detail"><div class="name"></div></div></div></div>'), i = r(), n = $.inArray(s, i);
-          },
-          stop: function(e, t) {
-            var s = $(t.item), a = s.attr('data-id'), l = s.prev('.gridItem').attr('data-id'), c = s.next('.gridItem').attr('data-id'), d = r();
-            $.inArray(a, d) !== n && d.length > 0 && i.toString() !== d.toString() && o(a, l, c, d), n = 0, i = !1;
+
+      e.loadSocialLogin = function() {t('login'), r('login');}, e.loadSocialSignup = function() {t('signup'), r('signup');};
+    }(App),
+    App.storage = function() {
+      var e = function() {try {return 'localStorage' in window && null !== window.localStorage;} catch (e) {return !1;}}();
+      return {
+        set: function(t, i, n) {
+          if (e) {
+            var r = !!n && $.now() + 1e3 * n;
+            i.timestamp = r, localStorage.setItem(t, JSON.stringify(i));
           }
-        });
-        var o = function(t, i, n, r) {
+        }, get: function(t) {
+          if (e) {
+            var i = localStorage.getItem(t);
+            return !!((i = JSON.parse(i)) && i.timestamp >= $.now()) && i;
+          }
+        }, remove: function(t) {e && localStorage.removeItem(t);}
+      };
+    }(),
+    function(e) {
+      function t(e, t, i, n, r) {
+        var o;
+        return 'twitter' === r ? o = function(r) {return r = 'https://twitter.com/intent/tweet?original_referer=' + encodeURIComponent(document.location.href), r += '&related=' + t, r += '&source=tweetbutton&text=' + i, r += '&url=' + e, r += '&via=' + n;}() : 'facebook' === r ? o = 'http://www.facebook.com/share.php?u=' + e + '&t=' + t : 'linkedin' === r && (o = 'http://www.linkedin.com/shareArticle?mini=true&url=' + e + '&title=' + i + '&summary=See many more awesome job opportunities on Designspiration Jobs.&source=Designspiration Jobs'), o;
+      }
+
+      e.socialShare = {
+        init: function(i) {
+          if (i = i || !1) {
+            var n = e.config.SHORT_URL, r = .5 * window.screen.width - 320, o = .3 * window.screen.height - 353 * .3;
+            i.each(function() {
+              var e = $(this),
+                  i = t(encodeURIComponent(e.attr('data-url') || n), encodeURIComponent(e.attr('data-related')) || '', encodeURIComponent(e.attr('data-text')), e.attr('data-via') || '', e.attr('data-type'));
+              e.attr({ href: i, target: '_blank' });
+            }), i.on('click.sharing', function() {
+              var t = $(this), i = t.attr('href'), n = 'toolbar=0, status=0, width=640, height=353, top=' + o + ', left=' + r;
+              return 'twitter' === t.attr('data-type') ? 'undefined' == typeof twttr && window.open(i, 'sharer', n) : window.open(i, 'sharer', n), e.analytics.trackGAEvent('social_share', 'clicked', t.attr('data-type'), i), !1;
+            });
+          }
+        }
+      };
+    }(App),
+    function(e) {
+      function t(t, i) {
+        this.lastScrollTop = 0, this.url = location.href, this.container = i.parent().find('.Pagination'), this.loader = null, this.hasLoader = !1, this.loading = !1, this.settings = {
+          distance: 400,
+          current: 1,
+          totalPages: 1
+        }, this.request = {}, t && $.extend(this.settings, t), this.initLoader = function() {
+          var t = this.container;
+          this.loader = new e.loader(t, 3), t.addClass('isLoader');
+        }, this.showLoader = function(e) {
+          var t = this;
+          t.loading = e, $('.isLoader').removeClass('loading'), e ? t.loading && t.loader.container.addClass('loading') : t.loader.container.removeClass('loading');
+        }, this.initLoader();
+      }
+
+      t.prototype = {
+        isLoading: function() {return !this.loading && (!(this.settings.totalOffset <= this.settings.current) && void 0);},
+        showPagination: function() {this.hasMoreItems() ? this.container.addClass('active') : this.container.removeClass('active');},
+        handleScrollImpression: function() {this.settings.current > 1 && ('related-saves' == this.settings.page ? (e.analytics.trackGAPageview('User Profiles|Save Closeup|1', 'scroll/'), e.analytics.trackGAEvent('Scroll Pageviews', 'scroll/')) : e.analytics.trackGAPageview(!1, 'scroll/'));},
+        isScrollingDown: function() {
+          var t = e.browser.getScrollPosition(), i = t > this.lastScrollTop;
+          return this.lastScrollTop = t, i;
+        },
+        hasMoreItems: function() {return this.settings.has_more || 1 === this.settings.has_more;},
+        stopListening: function() {this.layoutManager.scroller.off('.scrollmonitor');}
+      }, e.pagination = t;
+    }(App),
+    function(e) {
+      var t = { EDIT_BTN: { classes: 'action editTrigger', text: 'Edit' }, SAVE_BTN: { classes: 'action saveTrigger', text: 'Save' }, SIGNUP_BTN: { classes: 'action signupTrigger', text: 'Save' } };
+      e.save = {
+        relatedAjaxPending: !1,
+        current: {},
+        hasRelatedFeed: !1,
+        validateForm: {
+          add: function() {
+            var t = e.component.activeComponent.find('.description'), i = e.component.activeComponent.find('.active.item'), n = $.trim(t.val()), r = i.attr('data-id');
+            return '' === n ? (e.validate.form(t, { description: 'Please describe what you\'re saving' }), !1) : (e.validate.form(t), !!r);
+          }, edit: function() {return !0;}
+        },
+        init: function() {this.addListeners();},
+        addListeners: function() {
+          var t = e.$body, i = this;
+          t.on('click', 'a[rel="external"]', e.trackLink), t.on('click', '.save .saveTrigger', function(t) {
+            var n = $(this), r = n.parents('.gridItem'), o = (r.find('.gridItemImage'), !1), s = !1;
+            e.save.hasRelatedFeed && (s = !0), o = s ? e.json.related.data : e.json.data;
+            var a = r.attr('data-id'), l = i.getSaveDataByID(a, o), c = {
+              component: 'save-to-collection',
+              modal: 'saveModal',
+              id: a,
+              description: l.description,
+              image: l.images['2x'].url,
+              height: r.height(),
+              width: r.width(),
+              gridItem: r,
+              trigger: n,
+              isRelatedClick: s
+            };
+            if (n.attr('data-web')) c.link = r.find('.gridItemLink').prop('href'), c.isUpload = !0; else {
+              var d = r.parents('.mediaSimilar').length;
+              c.link = n.prop('href'), c.count = parseInt(r.find('.gridItemCount').text()), c.bg = r.find('.gridItemLink').css('background-color'), c.isRelated = d, c.isUpload = !1;
+            }
+            return e.component.load(c), !1;
+          }), t.on('click', '.save .editTrigger', function(t) {
+            var n = $(this), r = n.parents('.gridItem'), o = r.parents('.mediaSimilar').length, s = !1, a = !1;
+            e.save.hasRelatedFeed && (a = !0), s = a ? e.json.related.data : e.json.data;
+            var l = r.attr('data-id'), c = i.getSaveDataByID(l, s);
+            return e.component.load({
+              component: 'edit-save',
+              modal: 'editSaveModal',
+              id: l,
+              description: c.description,
+              link: n.prop('href'),
+              count: c.resaves,
+              bg: c.background,
+              image: c.images['2x'].url,
+              height: r.height(),
+              width: r.width(),
+              gridItem: r,
+              trigger: n,
+              isRelated: o,
+              isRelatedClick: a
+            }), !1;
+          }), t.on('click', '.save .signupTrigger', function(t) {
+            var i = $(this);
+            return e.component.load({ component: e.page.accessUI.component, modal: e.page.accessUI.modal, trigger: i }), !1;
+          });
+        },
+        addGridItemListeners: function(t) {
+          var i = t.order.length, n = e.$html.hasClass('freeze') ? 48 : 0, r = t.container.offset().top, o = e.browser.getScrollPosition() + n, s = e.browser.height - n,
+              a = { top: e.browser.getScrollPosition() + n, bottom: o + s, height: s, offset: r, headerOffset: n }, l = i;
+          for (l; l-- > 0;) {
+            var c = t.order[l], d = t.childrenItemInfo[c];
+            if (t.inViewport(d, a)) {
+              if (d.promoted && 'object' == typeof d.promoted && (d.hasSentImpression || (e.ads.sendEvent('impression', d.promoted), d.hasSentImpression = !0)), !d.hasListeners) {
+                p = (u = d.itemWrapper.find('.gridItemInnerWrap')).find('.gridItemLink');
+                d.hasListeners = !0, d.promoted ? p.on('click.gridItemLink', function(t) {
+                  var i = $(this).parents('.gridItem').attr('data-id'), n = e.save.hasRelatedFeed ? e.json.related.data : e.json.data, r = e.save.getSaveDataByID(i, n);
+                  e.ads.sendEvent('click', r.promoted);
+                }) : (e.isMobile || u.on('mouseenter.gridItemInnerWrap', function() {e.save.buildGridActions($(this));}).on('mouseleave.gridItemInnerWrap', function() {$(this).find('.gridItemActions,.gridItemGradient').remove();}), p.on('click.gridItemLink', function(t) {
+                  if (!e.usingkeyModifiers(t) && e.useHistory) {
+                    var i = $(this), n = !1, r = i.parents('.gridItem'), o = r.attr('data-id'), s = !1, a = !1;
+                    return e.save.current.id = parseInt(o), n && e.save.grid.cancelPreviousRequest(), 'page' === i.parents('.mediaSimilar.active').attr('data-rel') || r.hasClass('promoted') ? !0 : (e.save.hasRelatedFeed && (n = !0), s = n ? e.json.related.data : e.json.data, a = e.save.getSaveDataByID(o, s), e.json.related = !1, e.save.closeupLoader(a, !0, n), !1);
+                  }
+                }));
+              }
+            } else if ('hasListeners' in d && d.hasListeners) {
+              var u = d.itemWrapper.find('.gridItemInnerWrap'), p = u.find('.gridItemLink');
+              d.hasListeners = !1, u.off('mouseenter.gridItemInnerWrap'), u.off('mouseleave.gridItemInnerWrap').find('.gridItemActions,.gridItemGradient').remove(), p.off('click.gridItemLink');
+            }
+          }
+        },
+        buildGridActions: function(i) {
+          var n = i.parents('.gridItem');
+          if (i.find('.gridItemActions').length < 1 && !n.hasClass('promoted')) {
+            var r, o, s = n.attr('data-id'), a = e.save.hasRelatedFeed ? e.json.related.data : e.json.data, l = _.filter(a, function(e) {return e.id === parseInt(s);})[0], c = '';
+            e.json.page.user.isLoggedIn ? (r = t.SAVE_BTN.classes, o = t.SAVE_BTN.text, l.has_saved && (c = '<button type="button" class="' + t.EDIT_BTN.classes + '"><span>' + t.EDIT_BTN.text + '</span></button>')) : (r = t.SIGNUP_BTN.classes, o = t.SAVE_BTN.text), c += '<button type="button" class="' + r + '"><span>' + o + '</span></button>', l.resaves > 0 && (c += '<div class="gridItemCount">' + l.resaves + '</div>'), c = '<div class="gridItemActions">' + c + '</div>', i.append(c), i.find('.gridImageHeight').prepend('<div class="gridItemGradient"></div>');
+          }
+        },
+        buildCloseupActions: function(t, i) {
+          var n = '';
+          e.json.page.user.isLoggedIn ? t.has_saved ? (n = '<button type="button" class="action editTrigger isCloseup"><span>Edit</span></button>', n += '<button type="button" class="action saveTrigger isCloseup"><span>Save</span></button>') : n += '<button type="button" class="action saveTrigger isCloseup"><span>Save</span></button>' : n = '<button type="button" class="action signupTrigger isCloseup"><span>Save</span></button>', t.resaves > 0 && (n += '<div class="action gridItemCount">' + t.resaves + '</div>'), i.prepend(n);
+        },
+        getSaveDataByID: function(e, t) {
+          for (var i in t) if (t[i].id == e) return t[i];
+          return !1;
+        },
+        hashtagifyText: function(e) {return e.replace(/(\#)([^\s]+)/gi, ' <a href="/search/saves/?q=$2&qa=tag" data-type="tag" data-query="$2" class="descriptionTag searchableTerm" title="Explore $2 inspiration">#$2</a> ');},
+        showCloseupSavedBy: function(t) {
           $.ajax({
             url: '/resource/',
             type: 'POST',
             dataType: 'json',
-            data: { user: 1, arrange: 1, collection_id: t, before_collection_id: i || !1, after_collection_id: n || !1, request_token: e.config.requestToken },
-            error: function(t) {e.analytics.trackGAEvent('arrange_collections', 'error', t.responseText);},
-            success: function(t) {1 === t.status ? e.analytics.trackGAEvent('arrange_collections', 'success') : e.analytics.trackGAEvent('arrange_collections', 'failed', t.msg);}
+            data: { closeup_promoted: 1, request_token: e.config.requestToken },
+            error: function(e) {},
+            success: function(t) {t.data && e.ads.buildCloseupSidebar(t.data, e.$body.find('.mediaMeta'));},
+            complete: function() {}
           });
-        };
-      }
-    },
-    create: function(t) {
-      var i = e.component.activeComponent, n = 'create_collection', r = setTimeout(function() {
-        var t = i.find('.modalStep.processing');
-        new e.loader(t), t.addClass('active loading');
-      }, e.component.loadDelay), o = {
-        collection: 1,
-        create: 1,
-        name: i.find('.name').val(),
-        description: i.find('.description').val(),
-        category: i.find('.collectionCategory option:selected').val(),
-        privacy: !!i.find('.privacy:checked').prop('checked'),
-        request_token: e.config.requestToken
-      };
-      t.addClass('active'), $.ajax({
-        url: '/resource/',
-        type: 'POST',
-        dataType: 'json',
-        data: o,
-        error: function(t) {clearTimeout(r), e.analytics.trackGAEvent(n, 'error', t.responseText), i.find('.modalStep').removeClass('active loading');},
-        success: function(o) {clearTimeout(r), 1 === o.status ? (i.find('.modalStep.complete').addClass('active'), i.find('.modalStep').removeClass('loading'), 'profile-collections' === e.pageName ? e.redirect('/' + e.json.page.user.username + '/', 50) : e.component.hide(1200), e.analytics.trackGAEvent(n, 'success', 'page')) : (e.validate.form(i.find('.meta.column'), o.errors), i.find('.modalStep').removeClass('active loading'), e.setButtonRateLimit(function() {t.removeClass('disabled');}), e.analytics.trackGAEvent(n, 'failed', o.error)), e.component.setPosition();}
-      });
-    },
-    loadModal: function() {
-      var t = e.component.params, i = e.component.activeComponent, n = 'load_collection', r = i.find('.collectionsContainer'),
-          o = setTimeout(function() {r.addClass('isLoader loading'), new e.loader(r, 2);}, e.component.loadDelay), s = { collection: 1, modal: 1, url: t.link, request_token: e.config.requestToken },
-          a = i.find('.display').outerHeight(), l = Math.max(20, .5 * (a - t.height)), c = Math.min(t.height, a - 40), d = i.find('.displayItem');
-      t.height > a - 40 && d.find('.expandItemWrapper').addClass('collapsed'), d.css({
-        'background-color': t.bg,
-        'background-image': 'url(' + t.image + ')',
-        height: c + 'px',
-        top: l + 'px'
-      }), d.prev('.displayBackground').css({ 'background-color': t.bg, 'background-image': 'url(' + t.image + ')' }), $.ajax({
-        url: '/resource/',
-        type: 'POST',
-        dataType: 'json',
-        data: s,
-        error: function(t) {clearTimeout(o), r.removeClass('loading'), e.analytics.trackGAEvent(n, 'error', t.responseText);},
-        success: function(t) {
-          if (clearTimeout(o), 1 === t.status) {
-            var s = i.find('.privacy'), a = s.prev('.toggleSwitch');
-            i.find('.name').val(t.name), i.find('.description').val(t.description), i.find('.collectionCategory').val(t.category), i.find('.collaborators').html(t.collaborators), s.prop('checked') ? 0 == t.is_private && (a.removeClass('on').addClass('off'), s.prop('checked', !1)) : 1 == t.is_private && (a.removeClass('off').addClass('on'), s.prop('checked', !0)), e.analytics.trackGAEvent(n, 'success', 'collection_modal');
-          } else e.analytics.trackGAEvent(n, 'failed', t.error);
-          r.removeClass('loading');
-        }
-      });
-    },
-    quickCreate: function() {
-      var t = e.component.activeComponent, i = t.find('.collectionForm'), n = t.find('.createTrigger'), r = 'create_collection', o = (t.find('.privacy').prop('checked'), setTimeout(function() {
-        var i = t.find('.modalStep.processing');
-        new e.loader(i), i.addClass('active loading');
-      }, e.component.loadDelay)), s = {
-        collection: 1,
-        create: 1,
-        name: t.find('.collectionName').val(),
-        description: '',
-        category: '',
-        privacy: !!t.find('.privacy:checked').prop('checked'),
-        request_token: e.config.requestToken
-      };
-      $.ajax({
-        url: '/resource/',
-        type: 'POST',
-        dataType: 'json',
-        data: s,
-        error: function(t) {e.analytics.trackGAEvent(r, 'error', t.responseText);},
-        success: function(o) {
-          if (e.validate.form(i, o.errors), 1 === o.status) {
-            var s = t.find('.collections'), a = s.find('.item.active'), l = e.component.params && 'edit-save' === e.component.params.component ? '.saveTrigger' : '.item.active';
-            s.find('.title.savedIn').after(o.html), a.length > 0 && (s.find('.title.all').after(a), a.removeClass('active')), t.find(l).trigger('click'), e.analytics.trackGAEvent(r, 'success', 'save_modal');
-          } else e.validate.form(i, o.errors), e.setButtonRateLimit(function() {n.removeClass('disabled');}), e.analytics.trackGAEvent(r, 'failed', o.errors.message);
         },
-        complete: function() {clearTimeout(o), t.find('.modalStep').removeClass('loading');}
-      });
-    },
-    _delete: function(t) {
-      var i = e.component.activeComponent, n = 'delete_collection', r = setTimeout(function() {
-        var t = i.find('.modalStep.processing');
-        new e.loader(t), t.addClass('active loading');
-      }, e.component.loadDelay);
-      t.addClass('active'), $.ajax({
-        url: '/resource/',
-        type: 'POST',
-        dataType: 'json',
-        data: { url: e.component.params.link, collection: 1, delete: 1, request_token: e.config.requestToken },
-        error: function(t) {clearTimeout(r), e.analytics.trackGAEvent(n, 'error', t.responseText), i.find('.modalStep').removeClass('active loading');},
-        success: function(o) {
-          if (clearTimeout(r), 1 === o.status) {
-            var s = i.find('.modalStep.complete');
-            i.find('.modalStep').removeClass('loading'), e.$window.trigger('onBodyColumnsChanged'), s.find('.completeMessage').html(e.component.messages.DELETED), s.addClass('active'), 'collection' === e.pageName ? e.redirect('/' + e.json.page.user.username + '/', 50) : e.component.hide(1200), e.analytics.trackGAEvent(n, 'success', 'collection_modal');
-          } else i.find('.modalStep').removeClass('active loading'), e.setButtonRateLimit(function() {t.removeClass('disabled');}), e.analytics.trackGAEvent(n, 'failed', o.errors);
-        }
-      });
-    },
-    follow: function(i) {
-      var n = 'follow_collection', r = {
-        button: i, data: { collection: 1, follow: 1, url: i.attr('data-url'), request_token: e.config.requestToken }, GAEventType: n, successCallback: function(r) {
-          var o, s, a;
-          1 === r.status ? (o = t.FOLLOWING_BTN.text, s = t.FOLLOWING_BTN.classes, a = 'success', e.collection.updateItemAction(i, 'follow')) : (o = t.FOLLOW_BTN.text, s = t.FOLLOW_BTN.classes, a = 'failed'), i.removeClass().addClass(s).html(o), e.analytics.trackGAEvent(n, a);
-        }
-      };
-      e.analytics.trackGAEvent(n, 'clicked'), e.collection.autoLoadAjax(r);
-    },
-    unfollow: function(i) {
-      var n = 'unfollow_collection', r = {
-        button: i, data: { collection: 1, unfollow: 1, url: i.attr('data-url'), request_token: e.config.requestToken }, GAEventType: n, successCallback: function(r) {
-          var o, s, a;
-          1 === r.status ? (o = t.FOLLOW_BTN.text, s = t.FOLLOW_BTN.classes, a = 'success', e.collection.updateItemAction(i, 'unfollow')) : (o = t.FOLLOWING_BTN.text, s = t.FOLLOWING_BTN.classes, a = 'failed'), i.removeClass().addClass(s).html(o), e.analytics.trackGAEvent(n, a);
-        }
-      };
-      e.analytics.trackGAEvent(n, 'clicked'), e.collection.autoLoadAjax(r);
-    },
-    autoLoadAjax: function(t) {
-      var i;
-      $.ajax({
-        url: '/resource/',
-        type: 'POST',
-        dataType: 'json',
-        data: t.data,
-        error: function(n) {clearTimeout(i), e.setButtonRateLimit(function() {t.button.removeClass('disabled');}), e.analytics.trackGAEvent(t.GAEventType, 'error', n.responseText);},
-        beforeSend: function() {i = setTimeout(function() {t.button.text('').addClass('disabled isLoader loading'), new e.loader(t.button, 2);}, e.component.loadDelay), e.analytics.trackGAEvent(t.GAEventType, 'clicked');},
-        success: t.successCallback,
-        complete: function() {clearTimeout(i), e.setButtonRateLimit(function() {t.button.removeClass('disabled');});}
-      });
-    },
-    edit: function(t) {
-      var i = e.component.activeComponent, n = 'edit_collection', r = setTimeout(function() {
+        buildCloseupTemplate: function(t, i) {
+          var n, r, o = e.component.activeComponent.find('.modalScroller'), s = o.find('.mediaWrapper'), a = o.find('.mediaActionWiper'), l = o.find('.mediaMeta'), c = e.config.gridItemWidth,
+              d = (e.config.gridItemHeight, t.images['3x']), u = c * (d.h / d.w) / c, p = { 'background-color': t.background, 'max-width': Math.min(600, t.images['2x'].w) }, h = parseInt(t.id),
+              f = o.find('.mediaImage');
+          o.find('.mediaLink').css(p), o.animate({ scrollTop: 0 }, 1), r = u * Math.min(600, t.images['2x'].w) + 68, n = o.find('.mediaMeta').outerHeight(), n = Math.max(r, n), o.find('.mediaImage').attr({
+            src: t.images['2x'].url,
+            width: d.w,
+            height: d.h,
+            alt: t.description,
+            'data-mw': 0,
+            'data-mh': 0
+          });
+          var m = new Image;
+          $(m).load(function(e) {f.attr('src', e.target.src);}), m.src = d.url, o.find('.mediaSimilar').removeClass('active').find('.gridItems').html('').css('height', ''), o.find('.mediaSimilar .gridItems').attr('data-id', h), s.attr('data-id', h), a.html(''), l.find('.closeupSidebar').remove(), o.find('.mediaLink').attr('href', t.source_url), o.find('.mediaSourceDomain').html(t.source_domain), o.find('.visitTrigger').attr('href', t.source_url), o.find('.mediaDescription').html(e.save.hashtagifyText(t.description)), e.analytics.trackGAPageview('User Profiles|Save Closeup|1'), this.showCloseupSavedBy(h), l.find('.authorPictureContainer').attr('href', t.user_permalink).css('background', t.user_background).find('.authorPicture').attr('src', t.user_picture['1x']), r < n ? s.addClass('isVertSmall') : s.removeClass('isVertSmall'), e.isMobile || s.css('height', n + 'px'), o.find('.mediaHeight').css('padding-bottom', 100 * u + '%'), l.find('.authorName').attr('href', t.user_permalink).html(t.user_display_name), this.buildCloseupActions(t, a), e.component.isActiveComponentRequest = !1, this.showRelatedSaves(h, !0);
+        },
+        closeupLoader: function(t, i, n) {
+          if (t && !e.component.isActiveComponentRequest) {
+            var r = this, o = function(t, n) {
+              e.component.activeComponent;
+              if (e.useHistory) if (i) {
+                var o = e.historyManager.clicksToBackground + 1, s = 'Designspiration - ' + t.description, a = t, l = e.config.BASE_URL + '/save/' + a.id + '/';
+                a.clicksToBackground = o, a.isRelatedSaveClick = n, e.historyManager.clicksToBackground = o, e.historyManager.ignoreDoubleStateChange = !0, window.history.pushState(a, s, l);
+              } else e.historyManager.clicksToBackground = Math.max(0, e.historyManager.clicksToBackground - 1);
+              r.buildCloseupTemplate(t, n);
+            };
+            r.hasRelatedFeed = !0, n ? (e.save.grid.layoutManager.scroller.off(), o(t, n)) : e.component.load({
+              component: 'save-closeup',
+              modal: 'closeupModal',
+              id: t.id,
+              data: '',
+              isRelatedClick: n,
+              callback: function(e) {o(t, n);}
+            });
+          }
+        },
+        initCloseup: function(t) {
+          if (this.addCloseupListeners(t), !t) {
+            var i = e.$app.find('.mediaWrapper'), n = e.$app.find('.mediaSimilar');
+            if (this.hasRelatedFeed = !0, n.length > 0) {
+              var r = n.find('.gridItems'), o = (e.$window, i.attr('data-id'));
+              e.save.current.id = parseInt(o), e.json.related = e.json, n.addClass('active'), e.save.grid = new e.gridLayout({
+                feed: !0,
+                variable: !0,
+                isRelated: !0,
+                widthScale: e.isMobile,
+                container: r,
+                pagination: { save_id: o, currentPage: 1, has_more: !0, page: 'related-saves' },
+                isModal: t,
+                hasContainer: !1,
+                data: e.json.data,
+                type: 'save'
+              });
+            }
+          }
+        },
+        showRelatedSaves: function(t, i) {
+          var n = i ? e.component.activeComponent : e.$app;
+          i ? e.component.activeComponent.find('.gridItemsScroller') : e.$window;
+          (n = n.find('.mediaSimilar')).length > 0 && function(t) {
+            if (t) {
+              var r = i ? e.$modal.find('.Pagination') : e.$app.find('.Pagination'), o = setTimeout(function() {new e.loader(r, 3), r.addClass('isLoader loading');}, e.component.loadDelay);
+              this.relatedAjaxPending = $.ajax({
+                url: '/resource/',
+                type: 'POST',
+                dataType: 'json',
+                data: { page: 'related-saves', page_number: 1, save_id: t, request_token: e.config.requestToken },
+                error: function(e) {},
+                success: function(r) {
+                  if (r && r.data.length > 0) {
+                    var o = !!i;
+                    e.json.related = r;
+                    var s = n.find('.gridItems[data-id="' + t + '"]');
+                    n.addClass('active'), e.save.grid = new e.gridLayout({
+                      id: t,
+                      feed: !0,
+                      variable: !0,
+                      isRelated: !0,
+                      widthScale: e.isMobile,
+                      container: s,
+                      pagination: { save_id: t, currentPage: 1, has_more: !0, page: 'related-saves' },
+                      isModal: i,
+                      hasContainer: o,
+                      data: r.data,
+                      type: 'save'
+                    });
+                  }
+                },
+                complete: function() {r.removeClass('loading'), clearTimeout(o);}
+              });
+            }
+          }(t);
+        },
+        addCloseupListeners: function(t) {
+          var i = t ? e.component.activeComponent : e.$app;
+          t ? i.find('.modalScroller') : e.$window, i.find('.mediaWrapper');
+          new e.tags, i.on('click.modal', '.saveTrigger.isCloseup', function(t) {
+            var i = $(this), n = i.parents('.mediaWrapper'), r = n.find('.mediaImage'), o = e.save.scaleByWidth(r.height(), r.width(), e.config.gridItemWidth);
+            return e.component.load({
+              component: 'save-to-collection',
+              modal: 'saveModal',
+              id: n.attr('data-id'),
+              isCloseup: !0,
+              description: r.attr('alt'),
+              count: parseInt(n.find('.gridItemCount').text()),
+              bg: n.find('.gridItemLink').css('background-color'),
+              image: r.attr('src'),
+              height: o[0],
+              width: o[1],
+              gridItem: n,
+              trigger: i
+            }), !1;
+          }), i.on('click.modal', '.editTrigger.isCloseup', function(t) {
+            var i = $(this), n = i.parents('.mediaWrapper'), r = n.find('.mediaImage'), o = e.save.scaleByWidth(r.height(), r.width(), e.config.gridItemWidth);
+            return e.component.load({
+              component: 'edit-save',
+              modal: 'editSaveModal',
+              id: n.attr('data-id'),
+              link: i.prop('href'),
+              isCloseup: !0,
+              description: r.attr('alt'),
+              count: parseInt(n.find('.gridItemCount').text()),
+              bg: n.find('.gridItemLink').css('background-color'),
+              image: r.attr('src'),
+              height: o[0],
+              width: o[1],
+              gridItem: n,
+              trigger: i,
+              isRelatedClick: !1
+            }), !1;
+          }), i.on('click', '.signupTrigger', function(t) {
+            var i = $(this);
+            return e.component.load({ component: e.page.accessUI.component, modal: e.page.accessUI.modal, trigger: i }), !1;
+          }), i.on('click.modal', '.shareTrigger', function() {
+            var t = $(this);
+            return e.component.load({ component: 'share', modal: 'shareModal', id: t.parents('.mediaWrapper').attr('data-id'), trigger: t }), !1;
+          }), i.on('click.modal', '.reportTrigger', function() {
+            var i = $(this), n = i.parents('.mediaWrapper'), r = n.attr('data-id');
+            return e.component.load({
+              component: 'report', modal: 'reportModal', id: n.attr('data-id'), trigger: i, callback: function() {
+                var i = $(this);
+                if (!i.hasClass('disabled') && e.component.activeComponent.find('input[name=reason]').is(':checked')) {
+                  var n = t ? 'modal' : 'page', o = { report_save: 1, save_id: r, request_token: e.config.requestToken };
+                  i.addClass('disabled'), e.curate.report(o, 'save', n);
+                }
+                return !1;
+              }
+            }), !1;
+          });
+        },
+        resave: function(t) {
+          var i = e.component.activeComponent, n = setTimeout(function() {
+                var t = i.find('.modalStep.processing');
+                new e.loader(t), t.addClass('active loading');
+              }, e.component.loadDelay), r = i.find('.description').val(), o = t.attr('data-id'), s = t.attr('data-privacy'), a = e.component.params, l = a.id, c = a.isCloseup,
+              d = { collection_id: o, save_id: l, description: r, privacy: s, user: 1, resave: 1, request_token: e.config.requestToken };
+          t.addClass('active'), c && (d.closeup = !0), $.ajax({
+            url: '/resource/',
+            type: 'POST',
+            dataType: 'json',
+            data: d,
+            error: function(t) {clearTimeout(n), e.analytics.trackGAEvent('re_save', 'error', t.responseText), i.find('.modalStep').removeClass('active loading');},
+            success: function(r) {
+              if (clearTimeout(n), 1 === r.status) {
+                if (i.find('.modalStep.complete').addClass('active'), i.find('.modalStep').removeClass('loading'), c) {
+                  var o = a.gridItem, s = a.count + 1, l = r.button, u = r.id;
+                  a.isRelated ? (e.save.updateItemAction(d, r, e.component.params.isRelatedClick, 'save'), a.gridItem.attr('data-id', r.save_id)) : (o.find('.mediaWrapper').attr('data-id', u), o.find('.gridItemCount').html(s), o.find('.editTrigger').length < 1 && o.find('.mediaActions').prepend(l)), a.gridItem.attr('data-id', r.save_id);
+                } else e.save.updateItemAction(d, r, e.component.params.isRelatedClick, 'save'), a.gridItem.attr('data-id', r.save_id);
+                e.component.hide(1200), e.analytics.trackGAEvent('re_save', 'success', 'save_modal');
+              } else i.find('.modalStep').removeClass('active loading'), e.setButtonRateLimit(function() {t.removeClass('disabled');}), e.analytics.trackGAEvent('re_save', 'failed', r.error);
+            }
+          });
+        },
+        updateItemAction: function(t, i, n, r) {
+          var o = t.save_id, s = (i.save_id, n ? e.json.related.data : e.json.data);
+          for (var a in s) if (s[a].id == o) {
+            s[a].description = t.description, 'save' === r && (s[a].has_saved || (s[a].resaves += 1), s[a].has_saved = !0, s[a].id = parseInt(i.save_id));
+            break;
+          }
+        },
+        websave: function(t) {
+          var i = e.component.activeComponent, n = 'save_from_website', r = setTimeout(function() {
+                var t = i.find('.modalStep.processing');
+                new e.loader(t), t.addClass('active loading');
+              }, e.component.loadDelay), o = i.find('.description').val(), s = e.component.params.link, a = e.component.params.image, l = t.attr('data-id'),
+              c = (t.attr('data-privacy'), e.component.params),
+              d = c.id;
+          t.addClass('active'), $.ajax({
+            url: '/resource/',
+            type: 'POST',
+            dataType: 'json',
+            data: { collection_id: l, save_id: d, description: o, media_url: a, page_url: s, user: 1, websave: 1, request_token: e.config.requestToken },
+            error: function(t) {clearTimeout(r), e.analytics.trackGAEvent(n, 'error', t.responseText), i.find('.modalStep').removeClass('active loading');},
+            success: function(o) {
+              if (clearTimeout(r), 1 === o.status) {
+                var s = !0 === c.isCloseup ? 'Closeup' : '';
+                i.find('.modalStep.complete').addClass('active'), i.find('.modalStep').removeClass('loading'), c.gridItem.attr('data-id', o.save_id), c.trigger.next('.gridItemCount').html(c.count + 1), c.trigger.removeClass('saveTrigger' + s + ' blue').addClass('editTrigger' + s + ' grey').text('Edit'), e.component.hide(1200), e.analytics.trackGAEvent(n, 'success', 'save_modal');
+              } else i.find('.modalStep').removeClass('active loading'), e.setButtonRateLimit(function() {t.removeClass('disabled');}), e.analytics.trackGAEvent(n, 'failed', o.error);
+            }
+          });
+        },
+        bookmarkletSave: function(t) {
+          var i = e.component.activeComponent, n = 'save_from_bookmarklet', r = setTimeout(function() {
             var t = i.find('.modalStep.processing');
             new e.loader(t), t.addClass('active loading');
-          }, e.component.loadDelay), o = i.find('.name').val(), s = i.find('.description').val(), a = i.find('.collectionCategory option:selected').val(), l = !!i.find('.privacy:checked').prop('checked'),
-          c = { collection: 1, edit: 1, url: e.component.params.link, name: o, description: s, category: a, privacy: l, request_token: e.config.requestToken };
-      t.addClass('active'), $.ajax({
-        url: '/resource/',
-        type: 'POST',
-        dataType: 'json',
-        data: c,
-        error: function(t) {clearTimeout(r), i.find('.modalStep').removeClass('active loading'), e.analytics.trackGAEvent(n, 'error', t.responseText);},
-        success: function(o) {
-          if (clearTimeout(r), 1 === o.status) i.find('.modalStep.complete').addClass('active'), i.find('.modalStep').removeClass('loading'), 'collection' === e.pageName && o.location ? e.redirect(o.location, 50) : e.component.hide(1200), e.analytics.trackGAEvent(n, 'success', 'save_modal'); else {
-            var s = o.errors;
-            e.validate.form(i.find('.meta.column'), s), i.find('.modalStep').removeClass('active loading'), e.setButtonRateLimit(function() {t.removeClass('disabled');}), e.analytics.trackGAEvent(n, 'failed', s);
-          }
-          e.component.setPosition();
+          }, e.component.loadDelay), o = i.find('.description').val(), s = e.data, a = s.url, l = s.media, c = t.attr('data-id'), d = (t.attr('data-privacy'), s.id);
+          t.addClass('active'), $.ajax({
+            url: '/resource/',
+            type: 'POST',
+            dataType: 'json',
+            data: {
+              user: 1,
+              bookmarklet_save: 1,
+              save_id: d,
+              collection_id: c,
+              description: o,
+              source_image: encodeURIComponent(l),
+              source_url: encodeURIComponent(a),
+              request_token: e.config.requestToken
+            },
+            error: function(t) {clearTimeout(r), e.analytics.trackGAEvent(n, 'error', t.responseText), i.find('.modalStep').removeClass('active loading');},
+            success: function(o) {clearTimeout(r), 1 === o.status ? (i.find('.modalStep.complete').addClass('active'), i.find('.modalStep').removeClass('loading'), window.opener.postMessage(d + '_' + o.save_id, a), setTimeout(function() {window.close();}, 1200), e.analytics.trackGAEvent(n, 'success', 'save_modal')) : (i.find('.modalStep').removeClass('active loading'), e.setButtonRateLimit(function() {t.removeClass('disabled');}), e.analytics.trackGAEvent(n, 'failed', o.error));}
+          });
+        },
+        edit: function(t) {
+          var i = e.component.activeComponent, n = setTimeout(function() {
+                var t = i.find('.modalStep.processing');
+                new e.loader(t), t.addClass('active loading');
+              }, e.component.loadDelay), r = e.component.params.id, o = i.find('.description').val(), s = i.find('.website').val(), a = i.find('.item.active'), l = a.attr('data-id'),
+              c = (a.attr('data-privacy'), { save_id: r, collection_id: l, description: o, website: s, user: 1, edit_save: 1, request_token: e.config.requestToken });
+          t.addClass('active'), $.ajax({
+            url: '/resource/',
+            type: 'POST',
+            dataType: 'json',
+            data: c,
+            error: function(t) {clearTimeout(n), e.analytics.trackGAEvent('edit_save', 'error', t.responseText), i.find('.modalStep').removeClass('active loading');},
+            success: function(r) {clearTimeout(n), 1 === r.status ? (e.save.updateItemAction(c, r, e.component.params.isRelatedClick), i.find('.modalStep.complete').addClass('active'), i.find('.modalStep').removeClass('loading'), e.component.hide(1200), e.analytics.trackGAEvent('edit_save', 'success', 'save_modal')) : (e.validate.form(i.find('.meta.column'), r.error), i.find('.modalStep').removeClass('active loading'), e.setButtonRateLimit(function() {t.removeClass('disabled');}), e.analytics.trackGAEvent('edit_save', 'failed', r.error)), e.component.setPosition();}
+          });
+        },
+        _delete: function(t) {
+          var i = e.component.activeComponent, n = setTimeout(function() {
+            var t = i.find('.modalStep.processing');
+            new e.loader(t), t.addClass('active loading');
+          }, e.component.loadDelay);
+          t.addClass('active'), $.ajax({
+            url: '/resource/',
+            type: 'POST',
+            dataType: 'json',
+            data: { save_id: e.component.params.id, user: 1, delete_save: 1, request_token: e.config.requestToken },
+            error: function(t) {clearTimeout(n), e.analytics.trackGAEvent('delete_save', 'error', t.responseText), i.find('.modalStep').removeClass('active loading');},
+            success: function(r) {
+              if (clearTimeout(n), 1 === r.status) {
+                var o = i.find('.modalStep.complete');
+                i.find('.modalStep').removeClass('loading'), o.find('.completeMessage').html(e.component.messages.DELETED), o.addClass('active'), e.analytics.trackGAEvent('delete_save', 'success', 'save_modal'), e.component.hide(1200), e.redirect(r.redirect, 50);
+              } else i.find('.modalStep').removeClass('active loading'), e.setButtonRateLimit(function() {t.removeClass('disabled');}), e.analytics.trackGAEvent('delete_save', 'failed', r.error);
+            }
+          });
+        },
+        loadModal: function(t) {
+          var i = e.component.params, n = i.id;
+          if (!n) return !1;
+          var r = e.component.activeComponent, o = r.find('.collectionsContainer'), s = setTimeout(function() {o.addClass('isLoader loading'), new e.loader(o, 2);}, e.component.loadDelay),
+              a = { user: 1, request_token: e.config.requestToken }, l = r.find('.display').outerHeight(), c = Math.max(20, .5 * (l - i.height)), d = Math.min(i.height, l - 40),
+              u = r.find('.displayItem');
+          u.css({ 'background-color': i.bg, 'background-image': 'url(' + i.image + ')', height: d + 'px', top: c + 'px' }), u.prev('.displayBackground').css({
+            'background-color': i.bg,
+            'background-image': 'url(' + i.image + ')'
+          }), a.save_id = n, t ? a.edit_save_details = 1 : (a.user = 1, a.resave_details = 1, r.find('.description').val(i.description)), $.ajax({
+            url: '/resource/',
+            type: 'POST',
+            dataType: 'json',
+            data: a,
+            error: function(t) {clearTimeout(s), o.removeClass('loading'), e.analytics.trackGAEvent('load_save', 'error', t.responseText);},
+            success: function(n) {
+              if (clearTimeout(s), 1 === n.status) {
+                if (r.find('.collections').html(n.collections), t) {
+                  var a = r.find('.website');
+                  r.find('.description').val(n.description), n.website ? a.val(n.website) : (a.parents('.meta').addClass('noWebsite'), a.parent().remove()), r.find('.deleteTrigger').parent().addClass('isEdit');
+                } else r.find('.mediaDescription').val(i.description), n.has_saved && r.find('.descriptionContainer').before(n.has_saved);
+                e.component.setPosition(), e.analytics.trackGAEvent('load_save', 'success', 'save_modal');
+              } else e.analytics.trackGAEvent('load_save', 'failed', n.error);
+              o.removeClass('loading');
+            }
+          });
+        },
+        loadModalBookmarklet: function(t) {
+          var i = e.data, n = e.save.activeComponent, r = n.find('.collectionsContainer'), o = setTimeout(function() {r.addClass('isLoader loading'), new e.loader(r, 2);}, e.component.loadDelay),
+              s = { user: 1, request_token: e.config.requestToken }, a = n.find('.display').outerHeight(), l = this.scaleByWidth(i.height, i.width, 236)[0], l = Math.min(l, a - 40),
+              c = Math.max(20, .5 * (a - l)), d = n.find('.displayItem');
+          l > a - 40 && d.find('.expandItemWrapper').addClass('collapsed'), d.css({
+            'background-color': i.bg,
+            'background-image': 'url(' + i.media + ')',
+            height: l + 'px',
+            top: c + 'px'
+          }), d.prev('.displayBackground').css({
+            'background-color': i.bg,
+            'background-image': 'url(' + i.media + ')'
+          }), s.user = 1, s.collections = 1, n.find('.description').val(i.description), $.ajax({
+            url: '/resource/',
+            type: 'POST',
+            dataType: 'json',
+            data: s,
+            error: function(t) {clearTimeout(o), r.removeClass('loading'), e.analytics.trackGAEvent('load_save', 'error', t.responseText);},
+            success: function(t) {clearTimeout(o), 1 === t.status ? (n.find('.collections').html(t.collections), e.analytics.trackGAEvent('load_save', 'success', 'save_modal')) : e.analytics.trackGAEvent('load_save', 'failed', t.error), r.removeClass('loading');}
+          });
+        },
+        scaleByWidth: function(e, t, i) {
+          e = parseInt(e);
+          var n = i / (t = parseInt(t)), r = e, o = t;
+          return t > i && (r = Math.round(e * n), o = i), [r, o];
         }
-      });
-    },
-    inviteCollaborator: function(t) {
-      var i = e.component.activeComponent, n = 'invite_collaborator', r = setTimeout(function() {
-        var t = i.find('.inviteLoader.processing');
-        new e.loader(t), t.addClass('active loading');
-      }, e.component.loadDelay), o = i.find('.collaboratorEmail').val(), s = { collaborator: 1, invite: 1, url: e.component.params.link, collaborator: o };
-      t.addClass('active'), $.ajax({
-        url: '/resource/',
-        type: 'POST',
-        dataType: 'json',
-        data: s,
-        error: function(t) {e.analytics.trackGAEvent(n, 'error', t.responseText);},
-        success: function(t) {e.validate.form(i.find('.collaboratorContainer'), t.errors), 1 === t.status ? (i.find('.collaborators').append(t.html), e.analytics.trackGAEvent(n, 'success', 'collection_modal')) : e.analytics.trackGAEvent(n, 'failed', t.errors);},
-        complete: function() {clearTimeout(r), e.setButtonRateLimit(function() {t.removeClass('active');}), i.find('.inviteLoader').removeClass('loading');}
-      });
-    },
-    removeCollaborator: function(t) {
-      var i = e.component.activeComponent, n = 'remove_collaborator', r = setTimeout(function() {
-        var t = i.find('.inviteLoader.processing');
-        new e.loader(t), t.addClass('active loading');
-      }, e.component.loadDelay), o = t.parents('.item').attr('data-url'), s = { collaborator: 1, remove: 1, url: e.component.params.link, collaborator: o };
-      $.ajax({
-        url: '/resource/',
-        type: 'POST',
-        dataType: 'json',
-        data: s,
-        error: function(t) {e.analytics.trackGAEvent(n, 'error', t.responseText);},
-        success: function(r) {e.validate.form(i.find('.collaboratorContainer'), r.errors), 1 === r.status ? (t.parents('.item').remove(), e.analytics.trackGAEvent(n, 'success', 'collection_modal')) : (e.validate.form(i.find('.collaboratorContainer'), r.errors), e.analytics.trackGAEvent(n, 'failed', r.errors));},
-        complete: function() {clearTimeout(r), e.setButtonRateLimit(function() {t.removeClass('active');}), i.find('.inviteLoader').removeClass('loading');}
-      });
-    },
-    getCollectionByID: function(e) {return $('.collection.gridItem').find('[data-id="' + e + '"]').parents('.collection');},
-    destroy: function(e) {this.getCollectionByID(e).remove();},
-    update: function(e) {}
-  }, e.collection.HTML = t;
-}(App), function(e) {'function' == typeof define && define.amd ? define(['jquery'], e) : e(jQuery);}(function(e) {
-  'use strict';
-
-  function t(t, i) {
-    e.extend(this, {
-      _input: null,
-      _items: null,
-      _container: e(t),
-      items: 'li',
-      value: '',
-      cache: [],
-      queryCharLimit: 1,
-      queryTimer: null,
-      queryDelay: 100,
-      highlight: !1,
-      highlightClass: 'lfitem_match',
-      highlightColor: '#ffde00',
-      hiddenListClass: 'lflist_hidden',
-      hiddenItemAttr: 'data-lfhidden',
-      hiddenCount: 0,
-      onFound: null
-    }, i || {}), this._items = e(this.items, t), this._input = e(this.input), this._items.length && (this._input.length && this._input.on('keyup change', this._debounce(function() {
-      var t = (this._input.val() || '').toLowerCase();
-      (t = e.trim(t)) !== this.value && (this.value = t, t.length >= this.queryCharLimit ? this.query() : this.showAll());
-    }, this.queryDelay, this)), this.addStyles(), this.indexing());
-  }
-
-  e.fn.lookingfor = function(e) {return this.each(function() {new t(this, e);});}, t.prototype = {
-    addStyles: function() {
-      var t, i = e('head'), n = e('<style>').get(0),
-          r = [['.' + this.hiddenListClass + ' [' + this.hiddenItemAttr + ']', 'display: none'], ['.' + this.highlightClass, 'background: ' + this.highlightColor]];
-      i.append(n), t = n.sheet || document.styleSheets[0];
-      for (var o, s, a = 0; a < r.length; a++) o = r[a][0], s = r[a][1], t.insertRule ? t.insertRule(o + '{' + s + '}', 0) : t.addRule && t.addRule(o, s, 0);
-    },
-    indexing: function() {
-      var t = this;
-      this._items.each(function() {
-        var i = e(this);
-        t.cache.push({ node: this, html: this.innerHTML, text: (i.text() || '').toLowerCase(), hidden: !1 });
-      });
-    },
-    query: function(t) {
-      t = t || this.value, this.hiddenCount = 0;
-      for (var i, n = new RegExp(t, 'ig'), r = e.proxy(this._paint, this), o = 0, s = this.cache.length; o < s; o++) -1 === (i = this.cache[o]).text.indexOf(t) ? (i.hidden || (i.hidden = !0, i.node.setAttribute(this.hiddenItemAttr, '')), this.hiddenCount += 1) : i.hidden && (i.hidden = !1, i.node.removeAttribute(this.hiddenItemAttr)), this.highlight && (i.matched && (i.matched = !1, i.node.innerHTML = i.html), i.hidden || (i.matched = !0, i.node.innerHTML = i.html.replace(n, r))), this.onFound && !i.hidden && this.onFound(i.node, t);
-      this._container.addClass(this.hiddenListClass);
-    },
-    showAll: function() {
-      if (this.hiddenCount) {
-        for (var e, t = 0, i = this.cache.length; t < i; t++) (e = this.cache[t]).hidden = !1, e.node.removeAttribute(this.hiddenItemAttr), e.matched && (e.matched = !1, e.node.innerHTML = e.html);
-        this._container.removeClass(this.hiddenListClass), this.hiddenCount = 0;
-      }
-    },
-    _paint: function(e) {return '<span class="' + this.highlightClass + '">' + e + '</span>';},
-    _debounce: function(e, t, i) {
-      var n = null, r = this;
-      return function() {
-        var o = arguments;
-        clearTimeout(n), n = setTimeout(function() {e.apply(i || r, o);}, t);
       };
-    }
-  };
-}), function(e) {
-  e.useCanvas = !!document.createElement('canvas').getContext, e.useHistory = !!(window.history && window.history.pushState && window.history.replaceState), e.useLazyLoad = !window.navigator.userAgent.match(/ipad\.*OS 4_/gi), e.isIE = /msie/gi.test(navigator.userAgent), e.useRetina = window.devicePixelRatio > 1 || !(!window.matchMedia || !window.matchMedia('(-webkit-min-device-pixel-ratio: 1.5),\t\t\t(min--moz-device-pixel-ratio: 1.5),\t\t\t(-o-min-device-pixel-ratio: 3/2),\t\t\t(min-resolution: 1.5dppx)').matches), e.usingkeyModifiers = function(e) {return e.metaKey || e.ctrlKey || e.shiftKey || e.altKey;};
-  e.eventType = null !== document.ontouchstart ? 'click' : 'touchstart', e.log = function() {e.config.DEBUG && window.console && (Function.prototype.bind ? log = Function.prototype.bind.call(console.log, console) : log = function() {Function.prototype.apply.call(console.log, console, arguments);}, log.apply(this, arguments));}, e.now = Date.now || function() {return (new Date).getTime();}, e.set = function(e, t, i) {'string' == typeof e[t] ? e[t] = i : e.setAttribute(t, i);}, e.create = function(e) {
-    var t, i, n = !1;
-    for (t in e) if (e[t].hasOwnProperty) {
-      n = document.createElement(t);
-      for (i in e[t]) e[t][i].hasOwnProperty && 'string' == typeof e[t][i] && this.set(n, i, e[t][i]);
-      break;
-    }
-    return n;
-  }, e.setButtonRateLimit = function(e) {setTimeout(function() {e();}, 1e3);}, e.trackLink = function(t) {
-    var i = $(this), n = i.attr('href'), r = i.attr('target'), o = t.metaKey || t.ctrlKey;
-    return e.analytics.trackGAEvent('Outbound Links', t.currentTarget.host, n, 0), o || (t.preventDefault(), r ? window.open(n, r) : setTimeout('document.location.href = "' + href + '"', 100)), !0;
-  }, e.getUrlParams = function(e) {
-    var t = {};
-    return decodeURIComponent(window.location.href.slice(window.location.href.indexOf('?') + 1)).split('&').forEach(function(e, i) {
-      var n = e.split('=', 2);
-      t[n[0]] = n[1];
-    }), e && e in t ? t[e] : t;
-  }, e.getUrlParameter = function(e) {
-    for (var t = window.location.search.substring(1).split('&'), i = 0; i < t.length; i++) {
-      var n = t[i].split('=');
-      if (n[0] == e) return n[1];
-    }
-    return !1;
-  }, e.redirect = function(e, t) {t = t || 0, setTimeout(function() {window.location.href = e;}, t);}, e.redirectTarget = function(e, t, i) {i = i || 0, setTimeout(function() {window.open(e, t);}, i);}, Number.prototype.between = function(e, t, i) {
-    var n = Math.min.apply(Math, [e, t]), r = Math.max.apply(Math, [e, t]);
-    return i ? this >= n && this <= r : this > n && this < r;
-  }, e.prefixer = function() {
-    var e = window.getComputedStyle(document.documentElement, ''), t = (Array.prototype.slice.call(e).join('').match(/-(moz|webkit|ms)-/) || '' === e.OLink && ['', 'o'])[1];
-    return { dom: 'WebKit|Moz|MS|O'.match(new RegExp('(' + t + ')', 'i'))[1], lowercase: t, css: '-' + t + '-', js: t[0].toUpperCase() + t.substr(1) };
-  }(), Object.prototype.hasOwnProperty ? e.hasOwnProperty = function(e, t) {return e.hasOwnProperty(t);} : e.hasOwnProperty = function(e, t) {
-    var i = e.__proto__ || e.constructor.prototype;
-    return t in e && (!(t in i) || i[t] !== e[t]);
-  };
-}(App), function(e) {
+    }(App),
+    function(e) {
+      function t(t, i, n, r) {
+        var o, s = e.config.gridItemWidth, a = .4, l = i.gutter;
+        if (this.id = 9999999 * Math.random(), this.type = i.type, this.options = i, this.container = t, this.hasContainer = i.hasOwnProperty('hasContainer') && !0 === i.hasContainer, this.scroller = this.hasContainer ? t.parents('.gridItemsScroller') : e.$window, this.eventNamespace = i.isRelated ? '.related' : '.grid', this.order = [], this.childrenItemInfo = {}, this.columnLengths = [], this.columns = i.minCols, this.minCols = i.minCols, this.containerWidth = 0, this.pendingRequest = !1, this.request = !1, e.save.relatedAjaxPending) return !1;
+        if (r.feed) {
+          var c = !1;
+          r.hasOwnProperty('pagination') ? c = r.pagination : 'undefined' != typeof PaginationParams && (c = PaginationParams), this.pagination = new e.pagination(c, t);
+        }
+        this.pagination.loading = !0, i.isRelated && i.isModal && this.buildGridChildren(n), this.children = t.children(), this.hasItems() && (e.isMobile && (s -= 20), i.isFixedItem && (s = i.isFixedItem.width, a = i.isFixedItem.scale, l = i.isFixedItem.gutter), o = s, i.widthScale && (o = s + 5 * Math.round(s * a / 5)), this.widthScale = i.widthScale, this.gutter = l, this.minItemWidth = s + l, this.maxItemWidth = o + l, this.setDimensions(), this.prepareGridChildren(!0), this.addListeners(), this.onGridItemsLayoutComplete('initialize grid'));
+      }
+
+      var i = {
+        getNumColumnsInContainer: function(t) {
+          var i = e.config.gridItemWidth + this.gutter, n = t.parents('.singleColumn').outerWidth();
+          return Math.min(Math.max(Math.floor(n / i), this.minCols), e.config.gridMaxColumns);
+        }, updateNumColumns: function() {e.$window.trigger('onBodyColumnsChanged');}
+      };
+      $.extend(e.columnManager, i);
+      var n = function() {this.top = null, this.bottom = null, this.height = null, this.scale = null, this.columnIndex = null, this.promoted = !1, this.hasListeners = !1, this.hasSentImpression = !1;};
+      n.prototype = {
+        setScale: function(e, t, i) {this.scale = Math.min(e.gridItemWidth * (t / i), e.gridItemMaxHeight) / e.gridItemWidth;},
+        calculateHeight: function() {this.height = this.itemWrapper.height();},
+        setHeight: function(e, t) {t && (e += 23), this.height = e;},
+        build: function(t, i) {
+          if ('save' === t.type) {
+            var n = 'undefined' !== t.promoted && t.promoted, r = (E = t.images)['1x'], o = [r.url + ' 1x', E['2x'].url + ' 2x'];
+            n || o.push(E['3x'].url + ' 3x'), o = o.join(', '), n && (t.promoted = n, t.token = t.token), this.setScale(e.config, r.h, r.w);
+            var s;
+            s = e.isMobile ? this.scale * i : this.scale * e.config.gridItemWidth, this.setHeight(Math.floor(s), n);
+            I = e.create({ DIV: { className: 'gridItem save' + (n ? ' promoted' : '') } });
+            e.set(I, 'data-id', t.id), e.set(I, 'data-s', this.scale);
+            var a = e.create({ DIV: { className: 'gridItemWrapper' } }), l = e.create({ DIV: { className: 'gridItemInnerWrap' } }),
+                c = e.create({ DIV: { className: 'gridImageHeight', style: 'padding-bottom:' + 100 * this.scale + '%;' } });
+            gridItemUrl = n ? t.click_url : '/save/' + t.id + '/';
+            var d = e.create({ DIV: { className: 'gridItemCover' } }), u = e.create({ IMG: { alt: t.description, className: 'gridItemImage', src: r.url, srcset: o } }),
+                p = { className: 'gridItemLink', href: gridItemUrl, style: 'background-color:' + t.background + ';' };
+            if (n) {
+              var h = e.create({ DIV: { className: 'promotedBy', innerHTML: 'Promoted by <span>' + t.promoted.advertiser + '</span>' } });
+              p.target = '_blank', p.rel = 'nofollow';
+            }
+            return p = e.create({ A: p }), n || c.appendChild(d), c.appendChild(u), p.appendChild(c), l.appendChild(p), n && l.appendChild(h), a.appendChild(l), I.appendChild(a), I;
+          }
+          if ('collection' === t.type) {
+            I = e.create({ DIV: { className: 'gridItem collection' } });
+            e.set(I, 'data-id', t.id);
+            var a = e.create({ DIV: { className: 'gridItemWrapper' } }), l = e.create({ DIV: { className: 'gridItemInnerWrap' } }),
+                f = e.create({ DIV: { className: 'gridItemDisplay', style: 'background-color:' + t.background + ';' } }), p = e.create({ A: { className: 'gridItemLink', href: t.url } }),
+                m = e.create({ DIV: { className: 'detail' + (t.is_search ? ' search' : '') } }),
+                g = (e.create({ A: { className: 'name', href: t.url, innerHTML: t.name } }), e.create({ SPAN: { className: 'icons' } })), v = e.create({ DIV: { className: 'thumbs' } }),
+                y = e.create({ DIV: { className: 'cover', innerHTML: '<div class="dim"></div>' } });
+            e.hasOwnProperty(t.cover, '1x') && (y.style = 'background-image:url(' + t.cover['2x'] + ');');
+            for (var b = 0; b < 2; b += 1) {
+              var w = e.create({ DIV: { className: 'thumb', innerHTML: '<div class="dim"></div>' } }), x = t.thumbs[b];
+              x && e.hasOwnProperty(x, '2x') && (e.isMobile ? w.style = 'background-image:url(' + x['1x'] + ');' : w.style = 'background-image:url(' + x['2x'] + ');'), v.appendChild(w);
+            }
+            if (p.appendChild(y), p.appendChild(v), f.appendChild(p), e.json.page.user.is_my_profile) {
+              var C = e.create({ SPAN: { className: 'rearrange', innerHTML: 'Drag to Arrange' } });
+              f.appendChild(C);
+            }
+            l.appendChild(f), a.appendChild(l), t.is_private && g.appendChild(e.create({ SPAN: { className: 'private' } })), t.is_collab && g.appendChild(e.create({ SPAN: { className: 'collab' } }));
+            $ = e.create({ A: { className: 'name', href: t.url, innerHTML: t.name } });
+            if (t.is_search) {
+              var T = e.create({ DIV: { className: 'owner' } }), k = e.create({ DIV: { className: 'ownerImageContainer' } }),
+                  _ = e.create({ IMG: { alt: 'Explore ' + t.description + ' &rsquo;s Profile', className: 'ownerImage', src: t.owner_image['1x'] } }),
+                  S = e.create({ A: { className: 'ownerName', href: t.owner_url, innerHTML: t.owner_name } });
+              k.appendChild(_), T.appendChild(k), T.appendChild($), T.appendChild(S), m.appendChild(T);
+            } else m.appendChild($), m.appendChild(g);
+            return a.appendChild(m), I.appendChild(a), I;
+          }
+          if ('people' === t.type) {
+            var E = t.images, o = [E['1x'] + ' 1x', E['2x'] + ' 2x'].join(', '), I = e.create({ DIV: { className: 'gridItem people' } });
+            e.set(I, 'data-id', t.id);
+            var a = e.create({ DIV: { className: 'gridItemWrapper' } }), f = e.create({ DIV: { className: 'gridItemDisplay' } }),
+                A = e.create({ A: { className: 'imageContainer', href: t.url, style: 'background-color:' + t.background + ';' } }),
+                D = e.create({ IMG: { alt: 'Explore ' + t.display_name + '&rsquo;s Profile', className: 'image', src: E['1x'], srcset: o } }),
+                $ = e.create({ A: { className: 'name', href: t.url, innerHTML: t.display_name } }), P = e.json.page.user;
+            if (A.appendChild(D), f.appendChild(A), f.appendChild($), !t.is_my_profile) {
+              var M = e.create({ DIV: { className: 'gridItemActions' } }), L = e.create({ BUTTON: { className: 'profileSignup button blue', innerHTML: '<span>Follow</span>' } });
+              if (P.isLoggedIn) {
+                var O;
+                t.is_following ? (O = 'profileUnfollow button grey', L.innerHTML = '<span>Unfollow</span>') : O = 'profileFollow button blue', L.className = O;
+              }
+              e.set(L, 'data-url', t.url), M.appendChild(L), f.appendChild(M);
+            }
+            return a.appendChild(f), I.appendChild(a), I;
+          }
+          if ('interest' === t.type) {
+            I = e.create({ DIV: { className: 'gridItem interest' + (t.is_following ? ' active' : '') } });
+            e.set(I, 'data-id', t.id);
+            var a = e.create({ DIV: { className: 'gridItemWrapper' } }), f = e.create({ DIV: { className: 'gridItemDisplay' } }),
+                N = e.create({ DIV: { className: 'interestName', innerHTML: t.name } });
+            return f.appendChild(N), a.appendChild(f), I.appendChild(a), I;
+          }
+        }
+      }, t.prototype = {
+        addListeners: function() {
+          var t = this;
+          e.hasOwnProperty(e[t.type], 'addGridItemListeners') && e[t.type].addGridItemListeners(t), this.scroller.on('scroll.inviewport', _.throttle(function() {e.hasOwnProperty(e[t.type], 'addGridItemListeners') && e[t.type].addGridItemListeners(t);}, 200)), e.$window.on('onBodyColumnsChanged' + t.eventNamespace, _.debounce(function() {t.repositionGridChildren();}, 200)), this.addScrollListeners(), e.isMobile || e.$window.on('scroll.scrolltop', _.throttle(function() {e.browser.showScrollTop($('body,html'), e.$body, e.browser.getScrollPosition());}, 500));
+        },
+        addScrollListeners: function() {
+          var e = this;
+          e.scroller.off('scroll.scrollmonitor'), e.scroller.on('scroll.scrollmonitor', _.throttle(function() {e.onScrollLoadGrid();}, 300));
+        },
+        onScrollLoadGrid: function() {
+          if (this.pagination.isLoading()) return !1;
+          this.askMoreGridItems();
+        },
+        onBeforeGridItemsLoad: function(e, t) {this.pagination.showLoader(!1);},
+        onGridItemsLayoutComplete: function(t) {
+          var i = this.type;
+          e.hasOwnProperty(e[i], 'addGridItemListeners') && e[i].addGridItemListeners(this), this.pagination.loading = !1, this.askMoreGridItems();
+        },
+        needsMoreGridItemsInViewport: function() {return this.getYOffset() + this.getFilledHeight() < e.browser.getScrollPosition() + e.browser.height;},
+        askMoreGridItems: function() {
+          if (!this.pagination.loading) if (this.pagination.hasMoreItems()) if (this.needsMoreGridItemsInViewport()) this.getMoreGridItems(!0); else {
+            var t, i, n, r, o;
+            this.hasContainer ? (i = (t = this.scroller.scrollTop()) > this.pagination.lastScrollTop, n = this.scroller.height(), r = this.container.parents('.content').height()) : (i = (t = e.browser.getScrollPosition()) > this.pagination.lastScrollTop, n = e.browser.height, r = this.getYOffset() + this.getFilledHeight()), o = Math.max(r - n - t, 0), this.pagination.lastScrollTop = t, o < this.pagination.settings.distance && i && this.getMoreGridItems(!0);
+          } else this.pagination.showPagination();
+        },
+        cancelPreviousRequest: function() {this.pendingRequest && (this.pendingRequest.onreadystatechange = function() {}, this.pendingRequest.abort());},
+        getMoreGridItems: function() {
+          var t = this;
+          if (t.pagination.loading) return !1;
+          if (t.pagination.hasMoreItems()) {
+            var i = t.pagination.settings.hasOwnProperty('page') ? t.pagination.settings.page : e.pageName;
+            t.pagination.loading = !0, t.pagination.showLoader(!0), t.pagination.settings.current++, t.request = {
+              page: i,
+              url: window.location.pathname,
+              uri: window.location.href,
+              page_number: t.pagination.settings.current,
+              request_token: e.config.requestToken,
+              show_promoted: !1
+            }, e.ads && (t.request.show_promoted = e.ads.active), t.options.isRelated && (t.request.save_id = t.pagination.settings.save_id), $.ajax({
+              url: '/resource/',
+              type: 'POST',
+              dataType: 'json',
+              data: t.request,
+              error: function(e) {t.pendingRequest = !1, t.handleNewGridItems(!1);},
+              success: function(i, n) {void 0 !== i && (t.options.isRelated ? parseInt(i.save_id) === e.save.current.id && (t.pendingRequest = !1, t.handleNewGridItems(i.data)) : (t.pendingRequest = !1, t.handleNewGridItems(i.data)));}
+            });
+          }
+        },
+        setDimensions: function() {this.resetContainerWidth(), this.setContainerWidth(), this.columns = this.calculateNumColumns(), this.setItemOuterWidth(), this.setItemInnerWidth();},
+        resetContainerWidth: function() {this.container.css('width', '');},
+        setContainerWidth: function() {
+          var t;
+          t = e.isMobile ? this.container.innerWidth() : e.browser.width, this.options.hasContainer && (t = e.isMobile ? this.container.innerWidth() : this.container.width()), this.containerWidth = Math.max(this.minCols * this.minItemWidth, t);
+        },
+        setItemOuterWidth: function() {this.itemOuterWidth = Math.min(Math.floor(this.containerWidth / this.columns), this.maxItemWidth);},
+        setItemInnerWidth: function() {e.isMobile ? this.itemInnerWidth = this.itemOuterWidth - this.gutter : this.itemInnerWidth = this.itemOuterWidth;},
+        setScaleRatio: function() {return e.isMobile ? this.minItemWidth / this.itemInnerWidth : this.minItemWidth / this.itemOuterWidth;},
+        buildGridChildren: function(e) {
+          if (e) for (var t = 0; t < e.length; t += 1) {
+            var i = e[t], r = new n, o = $(r.build(i));
+            r.itemWrapper = o, this.container.append(o);
+          }
+        },
+        arrayToObject: function(e) {
+          var t = {}, i = e.length, n = 0;
+          for (n; n < i; n += 1) void 0 !== e[n] && (t[e[n].id] = e[n]);
+          return t;
+        },
+        prepareGridChildren: function(t) {
+          var i, r;
+          i = this.options.isRelated ? e.json.related.data : e.json.data, r = this.arrayToObject(i);
+          for (var o = 0; o < this.children.length; o += 1) {
+            var s = this.children[o], a = new n, l = s.getAttribute('data-id'), c = r[l], d = !1;
+            if (a.id = l, a.itemWrapper = $(s), c) {
+              if (a.promoted = c.promoted, d = c.promoted, a.promoted && !e.ads.active) continue;
+              c.promoted && (a.token = c.token);
+            }
+            this.options.isVariable ? (a.scale = parseFloat(s.getAttribute('data-s')), e.isMobile ? a.setHeight(Math.floor(a.scale * this.itemInnerWidth), c.promoted) : a.setHeight(Math.floor(a.scale * e.config.gridItemWidth), c.promoted)) : (this.itemHeight || (this.itemHeight = a.itemWrapper.find('.gridItemWrapper').innerHeight()), a.setHeight(this.itemHeight, d)), this.childrenItemInfo[l] = a, this.positionItem(a), this.order.push(l);
+          }
+          this.updateContainerDimension();
+        },
+        buildItems: function(t) {
+          for (var i = 0; i < t.length; i += 1) {
+            var r, o = t[i], s = new n;
+            r = e.isMobile ? $(s.build(o, this.itemInnerWidth)) : $(s.build(o)), s.id = o.id, s.itemWrapper = r, s.promoted = o.promoted, s.promoted && !e.ads.active || (o.promoted && (s.token = o.token), 'collection' !== o.type && 'people' !== o.type && 'interest' !== o.type || s.setHeight(this.itemHeight), s = this.positionItem(s), this.childrenItemInfo[o.id] = s, this.order.push(o.id), this.container.append(r));
+          }
+          this.updateContainerDimension();
+        },
+        positionItem: function(e) {
+          if (0 === this.columnLengths.length) {
+            if (this.itemWidth !== this.itemOuterWidth) {
+              var t = e.itemWrapper.find('.gridItemWrapper'), i = t.css('margin-top'), n = t.css('padding-top'), r = t.css('margin-bottom'), o = t.css('padding-bottom');
+              this.topItemMargin = parseInt(i, 10) + parseInt(n, 10), this.bottomItemMargin = parseInt(r, 10) + parseInt(o, 10), this.itemWidth = this.itemOuterWidth;
+            }
+            this.columnLengths = new Array(this.columns), this.setShortestColumnIndex();
+          }
+          return this.positionItemInColumn(e, this.shortestColumnIndex);
+        },
+        positionItemInColumn: function(t, i) {
+          i = Math.max(0, i), i = Math.min(this.columnLengths.length - 1, i);
+          var n = this.columnLengths[i], r = t.height + this.topItemMargin + this.bottomItemMargin + n, o = { visibility: 'visible' };
+          return this.options.isVariable && (o.width = e.isMobile ? this.itemOuterWidth : this.itemInnerWidth, o.top = n + 'px', o.left = i * this.itemWidth + 'px'), t.itemWrapper.css(o), t.top = n, t.bottom = r, t.columnIndex = i, this.columnLengths[i] = r, this.setShortestColumnIndex(), t;
+        },
+        updateGridChildren: function() {this.children = this.container.children(), this.numItemsOnLastPage = this.children.length;},
+        setShortestColumnIndex: function() {
+          this.shortestColumnIndex = 0;
+          for (var e = 0; e < this.columnLengths.length; e += 1) this.columnLengths[e] = this.columnLengths[e] || 0, this.columnLengths[e] < this.columnLengths[this.shortestColumnIndex] && (this.shortestColumnIndex = e);
+        },
+        updateContainerDimension: function() {this.container.css({ height: Math.max.apply(Math, this.columnLengths) + 'px' }), e.browser.cacheDimensions();},
+        hasItems: function() {return this.children.length && this.children.length > 0 && 'DIV' === this.children[0].nodeName;},
+        updateJson: function(t) {this.options.isRelated ? e.json.related.data = e.json.related.data.concat(t) : e.json.data = e.json.data.concat(t);},
+        handleNewGridItems: function(t) {
+          if (this.pendingRequest) return !1;
+          this.onBeforeGridItemsLoad('handleNewGridItems'), t && t.length > 0 ? (this.pagination.settings.has_more = !0, this.updateJson(t), e.isMobile ? this.buildItems(t, this.itemInnerWidth) : this.buildItems(t), this.pagination.handleScrollImpression()) : this.pagination.settings.has_more = !1, this.updateGridChildren(t.length), this.onGridItemsLayoutComplete('handleNewGridItems');
+        },
+        positionGridChildren: function() {
+          for (var e = 0; e < this.children.length; e += 1) {
+            var t = this.children[e].getAttribute('data-id');
+            this.positionItem(this.childrenItemInfo[t]);
+          }
+          this.updateContainerDimension();
+        },
+        repositionGridChildren: function() {
+          this.columns;
+          this.setDimensions(), this.columnLengths = [];
+          for (var t = 0; t < this.order.length; t += 1) {
+            var i = this.childrenItemInfo[this.order[t]];
+            e.isMobile && i.setHeight(Math.floor(i.scale * this.itemInnerWidth), i.promoted), this.positionItem(i);
+          }
+          this.updateContainerDimension(), this.onGridItemsLayoutComplete('repositionGridChildren');
+        },
+        repositionItemsInColumn: function(e) {
+          this.columnLengths[e] = 0;
+          var t = _.filter(this.childrenItemInfo, function(t) {return t.columnIndex === e;});
+          t = _.sortBy(t, function(e) {return e.top;}), _.each(t, function(t) {this.positionItemInColumn(t, e);}.bind(this)), this.updateContainerDimension();
+        },
+        calculateNumColumns: function() {
+          var t;
+          return t = this.widthScale && !e.isMobile ? Math.max(Math.round(this.containerWidth / this.minItemWidth), Math.floor(this.containerWidth / this.maxItemWidth)) : Math.max(Math.floor(this.containerWidth / this.minItemWidth), Math.floor(this.containerWidth / this.maxItemWidth)), Math.max(this.minCols, t);
+        },
+        inViewport: function(e, t) {
+          var i = e.height, n = t.offset + e.top, r = n + i, o = t.top, s = t.bottom;
+          if (e.promoted) {
+            var a;
+            t.height;
+            return r <= s && n >= o || (a = .2 * i, s - a >= n && r - a > o);
+          }
+          return r > o && n < s;
+        },
+        updateGridItemHeight: function(e) {this.childrenItemInfo[e].calculateHeight();},
+        getGridItemColumn: function(e) {return this.childrenItemInfo[e] ? this.childrenItemInfo[e].columnIndex : 0;},
+        getFilledHeight: function() {return this.options.isVariable ? this.columnLengths[this.shortestColumnIndex] : Math.max.apply(Math, this.columnLengths);},
+        getYOffset: function() {return this.yOffset ? this.yOffset : this.yOffset = this.container.offset().top || 0;}
+      }, e.gridLayout = function(i) {
+        var n = i.container || e.$app.find('.gridItems'), r = {
+          minCols: e.isMobile ? 1 : e.config.gridMinColumns,
+          maxCols: e.config.gridMaxColumns,
+          hasContainer: i.hasContainer || !1,
+          widthScale: i.widthScale || !1,
+          isRelated: i.isRelated || !1,
+          isVariable: i.variable,
+          isModal: i.isModal || !1,
+          isFixedItem: i.isFixedItem,
+          gutter: i.isFixedItem ? i.isFixedItem.gutter : e.config.gridItemGutter,
+          type: i.type
+        }, o = !!i.isRelated && i.data;
+        this.id = i.id, this.layoutManager = new t(n, r, o, i);
+      };
+    }(App),
+    function(e) {
+
+      var t = {
+        EDIT_BTN: { classes: 'editTrigger', text: 'Edit' },
+        FOLLOWING_BTN: { classes: 'collectionUnfollow', text: 'Unfollow' },
+        FOLLOW_BTN: { classes: 'collectionFollow', text: 'Follow' },
+        SIGNUP_BTN: { classes: 'signupTrigger', text: 'Follow' }
+      };
+      e.collection = {
+        current: {},
+        validateForm: {
+          create: function(t) {
+            var i = t.find('.collectionName').val(), n = t.find('.createTrigger');
+            return '' !== $.trim(i) ? (e.validate.form(t), n.removeClass('disabled'), !0) : (e.validate.form(t, { name: 'Name required' }), n.addClass('disabled'), !1);
+          }, edit: function() {return !0;}
+        },
+        init: function() {this.addListeners(), this.starterFunctions();},
+        addListeners: function() {
+          var t = e.$app;
+          e.config.isLoggedIn ? (t.on('click', '.createTrigger', function() {
+            $(this).parent();
+            return e.component.load({ component: 'create-collection', modal: 'createCollectionModal' }), !1;
+          }), t.find('.CollectionHeader').on('click', '.editTrigger', function() {
+            var t = $(this), i = t.parent();
+            return e.component.load({ component: 'edit-collection', modal: 'editCollectionModal', id: i.attr('data-id'), link: t.attr('data-url') }), !1;
+          }), t.on('click', '.collectionFollow', function() {
+            var t = $(this);
+            return t.hasClass('disabled') || e.collection.follow(t), !1;
+          }), t.on('click', '.collectionUnfollow', function() {
+            var t = $(this);
+            return t.hasClass('disabled') || e.collection.unfollow(t), !1;
+          })) : (t.on('click', '.signupTrigger', function(t) {
+            return e.component.load({
+              component: e.page.accessUI.component,
+              modal: e.page.accessUI.modal,
+              trigger: $(this)
+            }), !1;
+          }), t.on('click', '.profileSignup', function(t) {return e.component.load({ component: e.page.accessUI.component, modal: e.page.accessUI.modal, trigger: $(this) }), !1;}));
+        },
+        addGridItemListeners: function(t) {
+          if (e.isMobile) return !1;
+          var i = t.order.length, n = 0;
+          for (n; n < i; n += 1) {
+            var r = t.order[n], o = t.childrenItemInfo[r], s = o.itemWrapper, a = s.find('.gridItemInnerWrap');
+            a.find('.gridItemLink');
+            t.inViewport(o, t.container.offset().top) ? (a.on('mouseenter.gridItemInnerWrap', function() {e.collection.buildGridActions($(this));}).on('mouseleave.gridItemInnerWrap', function() {$(this).find('.gridItemActions,.gridItemGradient').remove();}), s.addClass('inView')) : (s.removeClass('inView'), a.off('mouseenter.gridItemInnerWrap'), a.off('mouseleave.gridItemInnerWrap').find('.gridItemActions,.gridItemGradient').remove());
+          }
+        },
+        buildGridActions: function(i) {
+          var n = e.json, r = n.data, o = i.parents('.gridItem');
+          if (i.find('.gridItemActions').length < 1) {
+            var s = o.attr('data-id'), a = i.find('.gridItemLink').attr('href');
+            if (!s) return;
+            var l, c, d = _.filter(r, function(e) {return e.id === parseInt(s);})[0];
+            n.page.user.isLoggedIn ? d.is_collaborator ? (l = t.EDIT_BTN.classes, c = t.EDIT_BTN.text) : d.is_following ? (l = t.FOLLOWING_BTN.classes, c = t.FOLLOWING_BTN.text) : d.is_following || (l = t.FOLLOW_BTN.classes, c = t.FOLLOW_BTN.text) : (l = t.SIGNUP_BTN.classes, c = t.SIGNUP_BTN.text), html = '<button type="button" data-url="' + a + '" class="' + l + '"><span>' + c + '</span></button>', html = '<div class="gridItemActions">' + html + '</div>', i.find('.gridItemDisplay').prepend(html);
+          }
+        },
+        updateAllGridActions: function(t) {
+          var i = e.json.data;
+          for (var n in i) 'follow' === t ? i[n].is_following = !0 : 'unfollow' === t && (i[n].is_following = !1);
+        },
+        updateItemAction: function(t, i) {
+          var n = t.parents('.gridItem').attr('data-id'), r = e.json.data;
+          for (var o in r) if (r[o].id == n) {
+            'follow' === i ? r[o].is_following = !0 : 'unfollow' === i && (r[o].is_following = !1);
+            break;
+          }
+        },
+        starterFunctions: function() {e.$app.hasClass('ownsProfile') && !e.isMobile && this.organizer();},
+        organizer: function() {
+          var t = e.$app.find('.sort');
+          if (!(t.length < 1)) {
+            var i = !1, n = 0, r = function() {
+              var e = [];
+              return t.find('.collection').each(function(t) {
+                var i = $(this).attr('data-id');
+                void 0 !== i && e.push(i);
+              }), e;
+            };
+            t.sortable({
+              cursor: 'move',
+              placeholder: 'gridItem collection placeholder',
+              items: '.collection:not(.newGridContent)',
+              revert: 180,
+              tolerance: 'pointer',
+              helper: 'clone',
+              start: function(e, t) {
+                var o = $(t.item), s = (o.width(), o.attr('data-id'));
+                t.placeholder.html('<div class="gridItemWrapper"><div class="gridItemDisplay"><div class="gridItemLink"></div></div><div class="detail"><div class="name"></div></div></div></div>'), i = r(), n = $.inArray(s, i);
+              },
+              stop: function(e, t) {
+                var s = $(t.item), a = s.attr('data-id'), l = s.prev('.gridItem').attr('data-id'), c = s.next('.gridItem').attr('data-id'), d = r();
+                $.inArray(a, d) !== n && d.length > 0 && i.toString() !== d.toString() && o(a, l, c, d), n = 0, i = !1;
+              }
+            });
+            var o = function(t, i, n, r) {
+              $.ajax({
+                url: '/resource/',
+                type: 'POST',
+                dataType: 'json',
+                data: { user: 1, arrange: 1, collection_id: t, before_collection_id: i || !1, after_collection_id: n || !1, request_token: e.config.requestToken },
+                error: function(t) {e.analytics.trackGAEvent('arrange_collections', 'error', t.responseText);},
+                success: function(t) {1 === t.status ? e.analytics.trackGAEvent('arrange_collections', 'success') : e.analytics.trackGAEvent('arrange_collections', 'failed', t.msg);}
+              });
+            };
+          }
+        },
+        create: function(t) {
+          var i = e.component.activeComponent, n = 'create_collection', r = setTimeout(function() {
+            var t = i.find('.modalStep.processing');
+            new e.loader(t), t.addClass('active loading');
+          }, e.component.loadDelay), o = {
+            collection: 1,
+            create: 1,
+            name: i.find('.name').val(),
+            description: i.find('.description').val(),
+            category: i.find('.collectionCategory option:selected').val(),
+            privacy: !!i.find('.privacy:checked').prop('checked'),
+            request_token: e.config.requestToken
+          };
+          t.addClass('active'), $.ajax({
+            url: '/resource/',
+            type: 'POST',
+            dataType: 'json',
+            data: o,
+            error: function(t) {clearTimeout(r), e.analytics.trackGAEvent(n, 'error', t.responseText), i.find('.modalStep').removeClass('active loading');},
+            success: function(o) {clearTimeout(r), 1 === o.status ? (i.find('.modalStep.complete').addClass('active'), i.find('.modalStep').removeClass('loading'), 'profile-collections' === e.pageName ? e.redirect('/' + e.json.page.user.username + '/', 50) : e.component.hide(1200), e.analytics.trackGAEvent(n, 'success', 'page')) : (e.validate.form(i.find('.meta.column'), o.errors), i.find('.modalStep').removeClass('active loading'), e.setButtonRateLimit(function() {t.removeClass('disabled');}), e.analytics.trackGAEvent(n, 'failed', o.error)), e.component.setPosition();}
+          });
+        },
+        loadModal: function() {
+          var t = e.component.params, i = e.component.activeComponent, n = 'load_collection', r = i.find('.collectionsContainer'),
+              o = setTimeout(function() {r.addClass('isLoader loading'), new e.loader(r, 2);}, e.component.loadDelay),
+              s = { collection: 1, modal: 1, url: t.link, request_token: e.config.requestToken },
+              a = i.find('.display').outerHeight(), l = Math.max(20, .5 * (a - t.height)), c = Math.min(t.height, a - 40), d = i.find('.displayItem');
+          t.height > a - 40 && d.find('.expandItemWrapper').addClass('collapsed'), d.css({
+            'background-color': t.bg,
+            'background-image': 'url(' + t.image + ')',
+            height: c + 'px',
+            top: l + 'px'
+          }), d.prev('.displayBackground').css({ 'background-color': t.bg, 'background-image': 'url(' + t.image + ')' }), $.ajax({
+            url: '/resource/',
+            type: 'POST',
+            dataType: 'json',
+            data: s,
+            error: function(t) {clearTimeout(o), r.removeClass('loading'), e.analytics.trackGAEvent(n, 'error', t.responseText);},
+            success: function(t) {
+              if (clearTimeout(o), 1 === t.status) {
+                var s = i.find('.privacy'), a = s.prev('.toggleSwitch');
+                i.find('.name').val(t.name), i.find('.description').val(t.description), i.find('.collectionCategory').val(t.category), i.find('.collaborators').html(t.collaborators), s.prop('checked') ? 0 == t.is_private && (a.removeClass('on').addClass('off'), s.prop('checked', !1)) : 1 == t.is_private && (a.removeClass('off').addClass('on'), s.prop('checked', !0)), e.analytics.trackGAEvent(n, 'success', 'collection_modal');
+              } else e.analytics.trackGAEvent(n, 'failed', t.error);
+              r.removeClass('loading');
+            }
+          });
+        },
+        quickCreate: function() {
+          var t = e.component.activeComponent, i = t.find('.collectionForm'), n = t.find('.createTrigger'), r = 'create_collection', o = (t.find('.privacy').prop('checked'), setTimeout(function() {
+            var i = t.find('.modalStep.processing');
+            new e.loader(i), i.addClass('active loading');
+          }, e.component.loadDelay)), s = {
+            collection: 1,
+            create: 1,
+            name: t.find('.collectionName').val(),
+            description: '',
+            category: '',
+            privacy: !!t.find('.privacy:checked').prop('checked'),
+            request_token: e.config.requestToken
+          };
+          $.ajax({
+            url: '/resource/',
+            type: 'POST',
+            dataType: 'json',
+            data: s,
+            error: function(t) {e.analytics.trackGAEvent(r, 'error', t.responseText);},
+            success: function(o) {
+              if (e.validate.form(i, o.errors), 1 === o.status) {
+                var s = t.find('.collections'), a = s.find('.item.active'), l = e.component.params && 'edit-save' === e.component.params.component ? '.saveTrigger' : '.item.active';
+                s.find('.title.savedIn').after(o.html), a.length > 0 && (s.find('.title.all').after(a), a.removeClass('active')), t.find(l).trigger('click'), e.analytics.trackGAEvent(r, 'success', 'save_modal');
+              } else e.validate.form(i, o.errors), e.setButtonRateLimit(function() {n.removeClass('disabled');}), e.analytics.trackGAEvent(r, 'failed', o.errors.message);
+            },
+            complete: function() {clearTimeout(o), t.find('.modalStep').removeClass('loading');}
+          });
+        },
+        _delete: function(t) {
+          var i = e.component.activeComponent, n = 'delete_collection', r = setTimeout(function() {
+            var t = i.find('.modalStep.processing');
+            new e.loader(t), t.addClass('active loading');
+          }, e.component.loadDelay);
+          t.addClass('active'), $.ajax({
+            url: '/resource/',
+            type: 'POST',
+            dataType: 'json',
+            data: { url: e.component.params.link, collection: 1, delete: 1, request_token: e.config.requestToken },
+            error: function(t) {clearTimeout(r), e.analytics.trackGAEvent(n, 'error', t.responseText), i.find('.modalStep').removeClass('active loading');},
+            success: function(o) {
+              if (clearTimeout(r), 1 === o.status) {
+                var s = i.find('.modalStep.complete');
+                i.find('.modalStep').removeClass('loading'), e.$window.trigger('onBodyColumnsChanged'), s.find('.completeMessage').html(e.component.messages.DELETED), s.addClass('active'), 'collection' === e.pageName ? e.redirect('/' + e.json.page.user.username + '/', 50) : e.component.hide(1200), e.analytics.trackGAEvent(n, 'success', 'collection_modal');
+              } else i.find('.modalStep').removeClass('active loading'), e.setButtonRateLimit(function() {t.removeClass('disabled');}), e.analytics.trackGAEvent(n, 'failed', o.errors);
+            }
+          });
+        },
+        follow: function(i) {
+          var n = 'follow_collection', r = {
+            button: i, data: { collection: 1, follow: 1, url: i.attr('data-url'), request_token: e.config.requestToken }, GAEventType: n, successCallback: function(r) {
+              var o, s, a;
+              1 === r.status ? (o = t.FOLLOWING_BTN.text, s = t.FOLLOWING_BTN.classes, a = 'success', e.collection.updateItemAction(i, 'follow')) : (o = t.FOLLOW_BTN.text, s = t.FOLLOW_BTN.classes, a = 'failed'), i.removeClass().addClass(s).html(o), e.analytics.trackGAEvent(n, a);
+            }
+          };
+          e.analytics.trackGAEvent(n, 'clicked'), e.collection.autoLoadAjax(r);
+        },
+        unfollow: function(i) {
+          var n = 'unfollow_collection', r = {
+            button: i, data: { collection: 1, unfollow: 1, url: i.attr('data-url'), request_token: e.config.requestToken }, GAEventType: n, successCallback: function(r) {
+              var o, s, a;
+              1 === r.status ? (o = t.FOLLOW_BTN.text, s = t.FOLLOW_BTN.classes, a = 'success', e.collection.updateItemAction(i, 'unfollow')) : (o = t.FOLLOWING_BTN.text, s = t.FOLLOWING_BTN.classes, a = 'failed'), i.removeClass().addClass(s).html(o), e.analytics.trackGAEvent(n, a);
+            }
+          };
+          e.analytics.trackGAEvent(n, 'clicked'), e.collection.autoLoadAjax(r);
+        },
+        autoLoadAjax: function(t) {
+          var i;
+          $.ajax({
+            url: '/resource/',
+            type: 'POST',
+            dataType: 'json',
+            data: t.data,
+            error: function(n) {clearTimeout(i), e.setButtonRateLimit(function() {t.button.removeClass('disabled');}), e.analytics.trackGAEvent(t.GAEventType, 'error', n.responseText);},
+            beforeSend: function() {i = setTimeout(function() {t.button.text('').addClass('disabled isLoader loading'), new e.loader(t.button, 2);}, e.component.loadDelay), e.analytics.trackGAEvent(t.GAEventType, 'clicked');},
+            success: t.successCallback,
+            complete: function() {clearTimeout(i), e.setButtonRateLimit(function() {t.button.removeClass('disabled');});}
+          });
+        },
+        edit: function(t) {
+          var i = e.component.activeComponent, n = 'edit_collection', r = setTimeout(function() {
+                var t = i.find('.modalStep.processing');
+                new e.loader(t), t.addClass('active loading');
+              }, e.component.loadDelay), o = i.find('.name').val(), s = i.find('.description').val(), a = i.find('.collectionCategory option:selected').val(),
+              l = !!i.find('.privacy:checked').prop('checked'),
+              c = { collection: 1, edit: 1, url: e.component.params.link, name: o, description: s, category: a, privacy: l, request_token: e.config.requestToken };
+          t.addClass('active'), $.ajax({
+            url: '/resource/',
+            type: 'POST',
+            dataType: 'json',
+            data: c,
+            error: function(t) {clearTimeout(r), i.find('.modalStep').removeClass('active loading'), e.analytics.trackGAEvent(n, 'error', t.responseText);},
+            success: function(o) {
+              if (clearTimeout(r), 1 === o.status) i.find('.modalStep.complete').addClass('active'), i.find('.modalStep').removeClass('loading'), 'collection' === e.pageName && o.location ? e.redirect(o.location, 50) : e.component.hide(1200), e.analytics.trackGAEvent(n, 'success', 'save_modal'); else {
+                var s = o.errors;
+                e.validate.form(i.find('.meta.column'), s), i.find('.modalStep').removeClass('active loading'), e.setButtonRateLimit(function() {t.removeClass('disabled');}), e.analytics.trackGAEvent(n, 'failed', s);
+              }
+              e.component.setPosition();
+            }
+          });
+        },
+        inviteCollaborator: function(t) {
+          var i = e.component.activeComponent, n = 'invite_collaborator', r = setTimeout(function() {
+            var t = i.find('.inviteLoader.processing');
+            new e.loader(t), t.addClass('active loading');
+          }, e.component.loadDelay), o = i.find('.collaboratorEmail').val(), s = { collaborator: 1, invite: 1, url: e.component.params.link, collaborator: o };
+          t.addClass('active'), $.ajax({
+            url: '/resource/',
+            type: 'POST',
+            dataType: 'json',
+            data: s,
+            error: function(t) {e.analytics.trackGAEvent(n, 'error', t.responseText);},
+            success: function(t) {e.validate.form(i.find('.collaboratorContainer'), t.errors), 1 === t.status ? (i.find('.collaborators').append(t.html), e.analytics.trackGAEvent(n, 'success', 'collection_modal')) : e.analytics.trackGAEvent(n, 'failed', t.errors);},
+            complete: function() {clearTimeout(r), e.setButtonRateLimit(function() {t.removeClass('active');}), i.find('.inviteLoader').removeClass('loading');}
+          });
+        },
+        removeCollaborator: function(t) {
+          var i = e.component.activeComponent, n = 'remove_collaborator', r = setTimeout(function() {
+            var t = i.find('.inviteLoader.processing');
+            new e.loader(t), t.addClass('active loading');
+          }, e.component.loadDelay), o = t.parents('.item').attr('data-url'), s = { collaborator: 1, remove: 1, url: e.component.params.link, collaborator: o };
+          $.ajax({
+            url: '/resource/',
+            type: 'POST',
+            dataType: 'json',
+            data: s,
+            error: function(t) {e.analytics.trackGAEvent(n, 'error', t.responseText);},
+            success: function(r) {e.validate.form(i.find('.collaboratorContainer'), r.errors), 1 === r.status ? (t.parents('.item').remove(), e.analytics.trackGAEvent(n, 'success', 'collection_modal')) : (e.validate.form(i.find('.collaboratorContainer'), r.errors), e.analytics.trackGAEvent(n, 'failed', r.errors));},
+            complete: function() {clearTimeout(r), e.setButtonRateLimit(function() {t.removeClass('active');}), i.find('.inviteLoader').removeClass('loading');}
+          });
+        },
+        getCollectionByID: function(e) {return $('.collection.gridItem').find('[data-id="' + e + '"]').parents('.collection');},
+        destroy: function(e) {this.getCollectionByID(e).remove();},
+        update: function(e) {}
+      }, e.collection.HTML = t;
+    }(App),
+    function(e) {'function' == typeof define && define.amd ? define(['jquery'], e) : e(jQuery);}(function(e) {
+      'use strict';
+
+      function t(t, i) {
+        e.extend(this, {
+          _input: null,
+          _items: null,
+          _container: e(t),
+          items: 'li',
+          value: '',
+          cache: [],
+          queryCharLimit: 1,
+          queryTimer: null,
+          queryDelay: 100,
+          highlight: !1,
+          highlightClass: 'lfitem_match',
+          highlightColor: '#ffde00',
+          hiddenListClass: 'lflist_hidden',
+          hiddenItemAttr: 'data-lfhidden',
+          hiddenCount: 0,
+          onFound: null
+        }, i || {}), this._items = e(this.items, t), this._input = e(this.input), this._items.length && (this._input.length && this._input.on('keyup change', this._debounce(function() {
+          var t = (this._input.val() || '').toLowerCase();
+          (t = e.trim(t)) !== this.value && (this.value = t, t.length >= this.queryCharLimit ? this.query() : this.showAll());
+        }, this.queryDelay, this)), this.addStyles(), this.indexing());
+      }
+
+      e.fn.lookingfor = function(e) {return this.each(function() {new t(this, e);});}, t.prototype = {
+        addStyles: function() {
+          var t, i = e('head'), n = e('<style>').get(0),
+              r = [['.' + this.hiddenListClass + ' [' + this.hiddenItemAttr + ']', 'display: none'], ['.' + this.highlightClass, 'background: ' + this.highlightColor]];
+          i.append(n), t = n.sheet || document.styleSheets[0];
+          for (var o, s, a = 0; a < r.length; a++) o = r[a][0], s = r[a][1], t.insertRule ? t.insertRule(o + '{' + s + '}', 0) : t.addRule && t.addRule(o, s, 0);
+        },
+        indexing: function() {
+          var t = this;
+          this._items.each(function() {
+            var i = e(this);
+            t.cache.push({ node: this, html: this.innerHTML, text: (i.text() || '').toLowerCase(), hidden: !1 });
+          });
+        },
+        query: function(t) {
+          t = t || this.value, this.hiddenCount = 0;
+          for (var i, n = new RegExp(t, 'ig'), r = e.proxy(this._paint, this), o = 0, s = this.cache.length; o < s; o++) -1 === (i = this.cache[o]).text.indexOf(t) ? (i.hidden || (i.hidden = !0, i.node.setAttribute(this.hiddenItemAttr, '')), this.hiddenCount += 1) : i.hidden && (i.hidden = !1, i.node.removeAttribute(this.hiddenItemAttr)), this.highlight && (i.matched && (i.matched = !1, i.node.innerHTML = i.html), i.hidden || (i.matched = !0, i.node.innerHTML = i.html.replace(n, r))), this.onFound && !i.hidden && this.onFound(i.node, t);
+          this._container.addClass(this.hiddenListClass);
+        },
+        showAll: function() {
+          if (this.hiddenCount) {
+            for (var e, t = 0, i = this.cache.length; t < i; t++) (e = this.cache[t]).hidden = !1, e.node.removeAttribute(this.hiddenItemAttr), e.matched && (e.matched = !1, e.node.innerHTML = e.html);
+            this._container.removeClass(this.hiddenListClass), this.hiddenCount = 0;
+          }
+        },
+        _paint: function(e) {return '<span class="' + this.highlightClass + '">' + e + '</span>';},
+        _debounce: function(e, t, i) {
+          var n = null, r = this;
+          return function() {
+            var o = arguments;
+            clearTimeout(n), n = setTimeout(function() {e.apply(i || r, o);}, t);
+          };
+        }
+      };
+    }),
+    function(e) {
+
+      e.useCanvas = !!document.createElement('canvas').getContext, e.useHistory = !!(window.history && window.history.pushState && window.history.replaceState), e.useLazyLoad = !window.navigator.userAgent.match(/ipad\.*OS 4_/gi), e.isIE = /msie/gi.test(navigator.userAgent), e.useRetina = window.devicePixelRatio > 1 || !(!window.matchMedia || !window.matchMedia('(-webkit-min-device-pixel-ratio: 1.5),\t\t\t(min--moz-device-pixel-ratio: 1.5),\t\t\t(-o-min-device-pixel-ratio: 3/2),\t\t\t(min-resolution: 1.5dppx)').matches), e.usingkeyModifiers = function(e) {return e.metaKey || e.ctrlKey || e.shiftKey || e.altKey;};
+      e.eventType = null !== document.ontouchstart ? 'click' : 'touchstart', e.log = function() {e.config.DEBUG && window.console && (Function.prototype.bind ? log = Function.prototype.bind.call(console.log, console) : log = function() {Function.prototype.apply.call(console.log, console, arguments);}, log.apply(this, arguments));}, e.now = Date.now || function() {return (new Date).getTime();}, e.set = function(e, t, i) {'string' == typeof e[t] ? e[t] = i : e.setAttribute(t, i);}, e.create = function(e) {
+        var t, i, n = !1;
+        for (t in e) if (e[t].hasOwnProperty) {
+          n = document.createElement(t);
+          for (i in e[t]) e[t][i].hasOwnProperty && 'string' == typeof e[t][i] && this.set(n, i, e[t][i]);
+          break;
+        }
+        return n;
+      }, e.setButtonRateLimit = function(e) {setTimeout(function() {e();}, 1e3);}, e.trackLink = function(t) {
+        var i = $(this), n = i.attr('href'), r = i.attr('target'), o = t.metaKey || t.ctrlKey;
+        return e.analytics.trackGAEvent('Outbound Links', t.currentTarget.host, n, 0), o || (t.preventDefault(), r ? window.open(n, r) : setTimeout('document.location.href = "' + href + '"', 100)), !0;
+      }, e.getUrlParams = function(e) {
+        var t = {};
+        return decodeURIComponent(window.location.href.slice(window.location.href.indexOf('?') + 1)).split('&').forEach(function(e, i) {
+          var n = e.split('=', 2);
+          t[n[0]] = n[1];
+        }), e && e in t ? t[e] : t;
+      }, e.getUrlParameter = function(e) {
+        for (var t = window.location.search.substring(1).split('&'), i = 0; i < t.length; i++) {
+          var n = t[i].split('=');
+          if (n[0] == e) return n[1];
+        }
+        return !1;
+      }, e.redirect = function(e, t) {t = t || 0, setTimeout(function() {window.location.href = e;}, t);}, e.redirectTarget = function(e, t, i) {i = i || 0, setTimeout(function() {window.open(e, t);}, i);}, Number.prototype.between = function(e, t, i) {
+        var n = Math.min.apply(Math, [e, t]), r = Math.max.apply(Math, [e, t]);
+        return i ? this >= n && this <= r : this > n && this < r;
+      }, e.prefixer = function() {
+        var e = window.getComputedStyle(document.documentElement, ''), t = (Array.prototype.slice.call(e).join('').match(/-(moz|webkit|ms)-/) || '' === e.OLink && ['', 'o'])[1];
+        return { dom: 'WebKit|Moz|MS|O'.match(new RegExp('(' + t + ')', 'i'))[1], lowercase: t, css: '-' + t + '-', js: t[0].toUpperCase() + t.substr(1) };
+      }(), Object.prototype.hasOwnProperty ? e.hasOwnProperty = function(e, t) {return e.hasOwnProperty(t);} : e.hasOwnProperty = function(e, t) {
+        var i = e.__proto__ || e.constructor.prototype;
+        return t in e && (!(t in i) || i[t] !== e[t]);
+      };
+    }(App),
+    function(e) {
   'use strict';
   'function' == typeof define && define.amd ? define(['jquery'], e) : e('undefined' != typeof jQuery ? jQuery : window.Zepto);
 }(function(e) {
