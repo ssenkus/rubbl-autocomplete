@@ -4010,7 +4010,10 @@
       }, r = function(i) {
         var n = e.config.BASE_URL.replace('https://', '');
         window._gaq.push(['_setAccount', t]), !0 === e.config.DEBUG && (n = 'none'), window._gaq.push(['_setDomainName', n]), window._gaq.push(i);
-      }, o = function(e) {return; e = e ? 'logged in' : 'logged out', window._gaq.push(['_setCustomVar', 1, 'is_logged_in', e, i.SESSION]);}, s = function() {
+      }, o = function(e) {
+        return;
+        e = e ? 'logged in' : 'logged out', window._gaq.push(['_setCustomVar', 1, 'is_logged_in', e, i.SESSION]);
+      }, s = function() {
         var t = window.innerWidth || document.body.clientWidth, i = window.innerHeight || document.body.clientHeight;
         t = 100 * Math.round(t / 100), i = 100 * Math.round(i / 100), e.analytics.trackGAEvent('Viewport', 'Size', t + 'x' + i), e.analytics.trackGAEvent('Viewport', 'Width', t + 'x' + i, t), e.analytics.trackGAEvent('Viewport', 'Height', t + 'x' + i, i);
       }, a = function() {
@@ -4031,7 +4034,10 @@
         }, trackGAPageview: function(t, n) {
           var o = window.location.pathname, s = e.analytics.group.SUBGROUP, a = e.analytics.group.PAGE, c = e.analytics.group.INDEX;
           t && (s = (t = l(t)).SUBGROUP, a = t.PAGE, c = t.INDEX), n && (o += n), r(['_setCustomVar', 2, 'page_name', a, i.PAGE]), r(['_setPageGroup', c, s]), r(['_trackPageview', e.analytics.getTrackGAPageviewUrl(o, window.location.search)]);
-        }, trackGAEvent: function(e, t, i, n) { return; r(['_trackEvent', e, t, i, n]);}, setReferringModal: function() {return Modal.primaryModal ? Modal.primaryModal.toLowerCase() + '_modal' : 'page';}
+        }, trackGAEvent: function(e, t, i, n) {
+          return;
+          r(['_trackEvent', e, t, i, n]);
+        }, setReferringModal: function() {return Modal.primaryModal ? Modal.primaryModal.toLowerCase() + '_modal' : 'page';}
       };
     }(App),
     function(e) {
@@ -6770,14 +6776,14 @@
       return t.join('&');
     },
     sendEvent: function(t, i) {
-      if (this.active) {
-        var n = this.objectize({ id: i.id, type: t, cache: (new Date).getTime() }), r = this.url + '?' + this.serialize(n), o = function(n, s, a) {
-          if (!n || '' === n) return !1;
-          var l = new Image;
-          l.addEventListener('load', function() {}), l.addEventListener('error', function() {a || o(r.replace('pn.g', 'pn_e.g'), s, !0);}), l.src = n, e.analytics.trackGAEvent('Ads', t, i.ad_type);
-        };
-        if (o(r, t, !0), i && !e.config.DEVELOPMENT) if ('impression' === t) {if (i.impression_urls.length > 0) for (var s = 0; s < i.impression_urls.length; s += 1) o(i.impression_urls[s], t);} else 'click' === t && i.click_tracking_url && o(i.click_tracking_url, t);
-      }
+      // if (this.active) {
+      //   var n = this.objectize({ id: i.id, type: t, cache: (new Date).getTime() }), r = this.url + '?' + this.serialize(n), o = function(n, s, a) {
+      //     if (!n || '' === n) return !1;
+      //     var l = new Image;
+      //     l.addEventListener('load', function() {}), l.addEventListener('error', function() {a || o(r.replace('pn.g', 'pn_e.g'), s, !0);}), l.src = n, e.analytics.trackGAEvent('Ads', t, i.ad_type);
+      //   };
+      //   if (o(r, t, !0), i && !e.config.DEVELOPMENT) if ('impression' === t) {if (i.impression_urls.length > 0) for (var s = 0; s < i.impression_urls.length; s += 1) o(i.impression_urls[s], t);} else 'click' === t && i.click_tracking_url && o(i.click_tracking_url, t);
+      // }
     },
     getScreen: function() {return screen.width + 'x' + screen.height;},
     getScreenHeight: function() {return screen.height;},
@@ -6821,246 +6827,6 @@
       }
     }
   }, e.AdManager = t;
-}(App), function(e) {
-  var t = {
-    EDIT_BTN: { classes: 'profileEdit grey', text: 'Edit' },
-    FOLLOWING_BTN: { classes: 'profileUnfollow grey', text: 'Unfollow' },
-    FOLLOW_BTN: { classes: 'profileFollow blue', text: 'Follow All' },
-    SIGNUP_BTN: { classes: 'profileSignup blue', text: 'Follow All' }
-  };
-  e.user = {
-    current: {},
-    validateForm: {
-      settings: function(t, i, n) {
-        var r = $.trim(t.find('.email').val()), o = $.trim(t.find('.username').val()), s = $.trim(t.find('.firstName').val());
-        if ('' !== r && '' !== o && '' !== s) return e.validate.form(t), i.removeClass('disabled'), !0;
-        var a = { validation: {} };
-        return r || (a.validation.email = 'Please enter your email'), o || (a.validation.username = 'Please enter a username'), s || (a.validation.first_name = 'Please enter your first name'), e.validate.form(t, a), i.addClass('disabled'), !1;
-      }, login: function(t, i, n) {
-        var r = $.trim(t.find('.username').val()), o = $.trim(t.find('.password').val()), s = !1;
-        if ('' !== r && '' !== o) e.validate.form(t), i.removeClass('disabled'), s = !0; else {
-          var a = { validation: {} };
-          r || (a.validation.username = 'Please enter your username'), o || (a.validation.password = 'Please enter your password'), e.validate.form(t, a), i.addClass('disabled');
-        }
-        return s;
-      }, passwordForgot: function(t, i, n) {
-        var r = $.trim(t.find('.email').val()), o = !1;
-        if ('' !== r) e.validate.form(t), i.removeClass('disabled'), o = !0; else {
-          var s = { validation: {} };
-          r || (s.validation.email = 'Please enter your email'), e.validate.form(t, s), i.addClass('disabled');
-        }
-        return o;
-      }, passwordReset: function(t, i, n) {
-        var r = $.trim(t.find('.newPassword').val()), o = $.trim(t.find('.confirmPassword').val()), s = !1;
-        if ('' !== r && '' !== o) e.validate.form(t), i.removeClass('disabled'), s = !0; else {
-          var a = { validation: {} };
-          r || (a.validation.new_password = 'Please create a new password'), o || (a.validation.confirm_password = 'Please re-type your new password'), e.validate.form(t, a), i.addClass('disabled');
-        }
-        return s;
-      }, signup: function(t, i, n) {
-        var r = $.trim(t.find('.email').val()), o = $.trim(t.find('.password').val()), s = !1;
-        return '' !== r && '' !== o && (e.validate.form(t), i.removeClass('disabled'), s = !0), s;
-      }
-    },
-    init: function() {this.addListeners();},
-    addListeners: function() {
-      var t = e.$app;
-      e.config.isLoggedIn ? (t.on('click.page', '.profileFollow', function(t) {
-        var i = $(this);
-        return i.hasClass('disabled') || e.user.follow(i), !1;
-      }), t.on('click.page', '.profileUnfollow', function(t) {
-        var i = $(this);
-        return i.hasClass('disabled') || e.user.unfollow(i), !1;
-      })) : t.on('click', '.profileSignup', function(t) {return e.component.load({ component: e.page.accessUI.component, modal: e.page.accessUI.modal, trigger: $(this) }), !1;});
-    },
-    login: function(t, i, n) {
-      var r = setTimeout(function() {i.text('').addClass('disabled isLoader loading'), new e.loader(i, 2);}, e.component.loadDelay);
-      t.removeClass('hasSuccess hasError'), $.ajax({
-        url: '/resource/',
-        type: 'POST',
-        dataType: 'json',
-        data: t.serialize(),
-        error: function(t) {clearTimeout(r), i.html('Log in'), e.setButtonRateLimit(function() {i.removeClass('disabled');}), e.analytics.trackGAEvent(n, 'error', t.responseText);},
-        success: function(o) {1 === o.status ? (e.analytics.trackGAEvent(n, 'success'), e.page.setUI('ui_last_access', 'login'), e.redirect(o.location, 100)) : (clearTimeout(r), i.html('Log in'), e.setButtonRateLimit(function() {i.removeClass('disabled');}), e.validate.form(t, o.errors), e.analytics.trackGAEvent(n, 'failed', o.errors));}
-      });
-    },
-    signupStep1: function(t, i, n, r) {
-      var o = setTimeout(function() {n.text('').addClass('disabled isLoader loading'), new e.loader(n, 2);}, e.component.loadDelay);
-      i.removeClass('hasSuccess hasError'), $.ajax({
-        url: '/resource/',
-        type: 'POST',
-        dataType: 'json',
-        data: i.find(':input').serialize(),
-        error: function(t) {e.setButtonRateLimit(function() {n.removeClass('disabled');}), e.analytics.trackGAEvent(r, 'step_1_error', t.responseText);},
-        success: function(t) {1 === t.status ? (e.analytics.trackGAEvent(r, 'step_1_success'), e.redirect(t.location, 100)) : (e.validate.form(i, t.errors), e.analytics.trackGAEvent(r, 'step_1_failed', t.errors));},
-        complete: function() {e.$window.trigger('onModalDimensionChanged'), clearTimeout(o), n.html('Sign up'), e.setButtonRateLimit(function() {n.removeClass('disabled');});}
-      });
-    },
-    signupStep2: function(t, i, n) {
-      var r = setTimeout(function() {i.text('').addClass('disabled isLoader loading'), new e.loader(i, 2);}, e.component.loadDelay), o = t.parents('.modalForm');
-      t.removeClass('hasSuccess hasError'), $.ajax({
-        url: '/resource/',
-        type: 'POST',
-        dataType: 'json',
-        data: o.find('.email, .password, .step2 :input').serialize(),
-        error: function(t) {e.setButtonRateLimit(function() {i.removeClass('disabled');}), e.analytics.trackGAEvent(n, 'step_2_error', t.responseText);},
-        success: function(i) {1 === i.status ? (e.analytics.trackGAEvent(n, 'step_2_success'), e.redirect(i.location, 100)) : (e.validate.form(t, i.errors), e.analytics.trackGAEvent(n, 'step_2_failed', i.errors));},
-        complete: function() {e.$window.trigger('onModalDimensionChanged'), clearTimeout(r), i.html('Continue'), e.setButtonRateLimit(function() {i.removeClass('disabled');});}
-      });
-    },
-    passwordForgot: function(t, i, n) {
-      var r = setTimeout(function() {i.text('').addClass('disabled isLoader loading'), new e.loader(i, 2);}, e.component.loadDelay);
-      $.ajax({
-        url: '/resource/',
-        type: 'POST',
-        dataType: 'json',
-        data: t.serialize(),
-        error: function(t) {e.analytics.trackGAEvent(n, 'error', t.responseText);},
-        success: function(o) {clearTimeout(r), 1 === o.status ? (e.$app.find('.formTitle').html(o.message), i.removeClass('isLoader loading').html('Email Sent'), t.addClass('hasSuccess'), e.analytics.trackGAEvent(n, 'success')) : (e.validate.form(t, o.errors), e.setButtonRateLimit(function() {i.removeClass('disabled');}), e.analytics.trackGAEvent(n, 'failed', o.errors));},
-        complete: function() {clearTimeout(r), e.$window.trigger('onModalDimensionChanged'), i.removeClass('isLoader loading').html('Email Me Instructions');}
-      });
-    },
-    passwordReset: function(t, i, n) {
-      var r = setTimeout(function() {i.text('').addClass('disabled isLoader loading'), new e.loader(i, 2);}, e.component.loadDelay);
-      $.ajax({
-        url: '/resource/',
-        type: 'POST',
-        dataType: 'json',
-        data: t.serialize(),
-        error: function(t) {e.analytics.trackGAEvent(n, 'error', t.responseText);},
-        success: function(o) {clearTimeout(r), 1 === o.status ? (e.analytics.trackGAEvent(n, 'success'), i.removeClass('isLoader loading'), t.parents('.passwordFormContainer').addClass('hasSuccess')) : (e.validate.form(t, o.errors), e.setButtonRateLimit(function() {i.removeClass('disabled');}), e.analytics.trackGAEvent(n, 'failed', o.errors));},
-        complete: function() {clearTimeout(r), i.removeClass('isLoader loading').html('Save Password');}
-      });
-    },
-    resendConfirmEmail: function(t, i) {
-      var n = setTimeout(function() {t.text('').addClass('disabled isLoader loading'), new e.loader(t, 2);}, e.component.loadDelay);
-      $.ajax({
-        url: '/resource/',
-        type: 'POST',
-        dataType: 'json',
-        data: { user: 1, resend_email: 1, request_token: e.config.requestToken },
-        error: function(t) {e.analytics.trackGAEvent(i, 'error', t.responseText);},
-        success: function(r) {
-          var o = t.parents('.confirmParent').find('p');
-          clearTimeout(n), 1 === r.status ? (e.analytics.trackGAEvent(i, 'success'), o.html(r.message), t.hide()) : (e.analytics.trackGAEvent(i, 'failed', r.errors), r.errors.application && (o.html(r.errors.application), t.hide()));
-        },
-        complete: function() {e.setButtonRateLimit(function() {t.removeClass('disabled');});}
-      });
-    },
-    logout: function(t) {
-      $.ajax({
-        url: '/resource/',
-        type: 'POST',
-        dataType: 'json',
-        data: { user: 1, logout: 1, request_token: e.config.requestToken },
-        error: function(i) {e.analytics.trackGAEvent(t, 'error', i.responseText);},
-        success: function(i) {1 === i.status ? (e.analytics.trackGAEvent(t, 'success'), e.redirect(i.location, 200)) : e.analytics.trackGAEvent(t, 'failed');}
-      });
-    },
-    interests: function(t, i, n) {
-      var r = setTimeout(function() {i.text('').addClass('disabled isLoader loading'), new e.loader(i, 2);}, e.component.loadDelay), o = [];
-      t.find('.selectedInterest:checked').each(function() {o.push($(this).val());}), $.ajax({
-        url: '/resource/',
-        type: 'POST',
-        dataType: 'json',
-        data: { user: 1, signup_interests: 1, request_token: e.config.requestToken, interests: o.join(',') },
-        error: function(t) {e.setButtonRateLimit(function() {i.removeClass('disabled');}), e.analytics.trackGAEvent(n, 'step_3_error', t.responseText);},
-        success: function(i) {1 === i.status ? (e.analytics.trackGAEvent(n, 'step_3_success'), e.redirect(i.location, 100)) : (e.validate.form(t, i.errors), e.analytics.trackGAEvent(n, 'step_3_failed', i.errors));},
-        complete: function() {clearTimeout(r), i.html('Build my feed'), e.setButtonRateLimit(function() {i.removeClass('disabled');});}
-      });
-    },
-    settings: function(t, i, n) {
-      var r = {
-        button: i,
-        data: e.$app.find('.settingsForm').serialize(),
-        GAEventType: n,
-        successCallback: function(r) {
-          if (1 === r.status) {
-            var o = '/' + t.find('.username').val() + '/';
-            t.find('.cancelTrigger').attr('href', o).html('Done'), e.$app.find('.settingProfileNav,.headerNavProfileLink').attr('href', o), t.find('.settingsFormNotifer').html(r.message), t.addClass('hasSuccess'), e.analytics.trackGAEvent(n, 'success'), setTimeout(function() {e.redirect('/settings/');}, 2e3);
-          } else e.validate.form(t, r.errors), t.addClass('hasError'), e.analytics.trackGAEvent(n, 'failed');
-          i.addClass('saveSettingsTrigger blue').html('Save');
-        }
-      };
-      t.removeClass('hasSuccess hasError'), e.user.autoLoadAjax(r);
-    },
-    follow: function(i) {
-      var n = {
-        button: i,
-        data: { user: 1, follow: 1, url: i.attr('data-url'), request_token: e.config.requestToken },
-        GAEventType: 'follow_user',
-        successCallback: function(n) {
-          var r, o, s;
-          if (1 === n.status) {
-            var a = e.collection.HTML;
-            r = t.FOLLOWING_BTN.text, o = t.FOLLOWING_BTN.classes, s = 'success', 1 === parseInt(i.attr('data-element-type')) && e.collection.updateAllGridActions('follow'), e.$app.find('.collectionFollow').removeClass().addClass(a.FOLLOWING_BTN.classes).html(a.FOLLOWING_BTN.text), i.removeClass().addClass(o).html(r);
-          } else r = t.FOLLOWING_BTN.text, o = t.FOLLOW_BTN.classes, s = 'failed', i.removeClass().addClass(o).html(r);
-          e.analytics.trackGAEvent('follow_user', s);
-        }
-      };
-      e.analytics.trackGAEvent('follow_user', 'clicked'), e.user.autoLoadAjax(n);
-    },
-    unfollow: function(i) {
-      var n = {
-        button: i,
-        data: { user: 1, unfollow: 1, url: i.attr('data-url'), request_token: e.config.requestToken },
-        GAEventType: 'unfollow_user',
-        successCallback: function(n) {
-          var r, o, s;
-          if (1 === n.status) {
-            var a = e.collection.HTML;
-            r = t.FOLLOW_BTN.text, o = t.FOLLOW_BTN.classes, s = 'success', 1 === parseInt(i.attr('data-element-type')) && e.collection.updateAllGridActions('unfollow'), i.removeClass().addClass(o).html(r), e.$app.find('.collectionUnfollow').removeClass().addClass(a.FOLLOW_BTN.classes).html(a.FOLLOW_BTN.text);
-          } else r = t.FOLLOWING_BTN.text, o = t.FOLLOWING_BTN.classes, s = 'failed', i.removeClass().addClass(o).html(r);
-          e.analytics.trackGAEvent('unfollow_user', s);
-        }
-      };
-      e.user.autoLoadAjax(n);
-    },
-    autoLoadAjax: function(t) {
-      var i;
-      $.ajax({
-        url: '/resource/',
-        type: 'POST',
-        dataType: 'json',
-        data: t.data,
-        error: function(n) {clearTimeout(i), e.setButtonRateLimit(function() {t.button.removeClass('disabled');}), e.analytics.trackGAEvent(t.GAEventType, 'error', n.responseText);},
-        beforeSend: function() {i = setTimeout(function() {t.button.text('').addClass('disabled isLoader loading'), new e.loader(t.button, 2);}, e.component.loadDelay), e.analytics.trackGAEvent(t.GAEventType, 'clicked');},
-        success: t.successCallback,
-        complete: function() {clearTimeout(i), e.setButtonRateLimit(function() {t.button.removeClass('disabled');});}
-      });
-    },
-    loadCollections: function() {
-      var t = e.modal.activeModal, i = { user: 1, collections: 1, request_token: e.config.requestToken }, n = setTimeout(function() {
-        var i = t.find('.modalStep.processing');
-        new e.loader(i);
-        i.addClass('active loading');
-      }, e.component.loadDelay);
-      $.ajax({
-        url: '/resource/user/get/',
-        type: 'POST',
-        dataType: 'json',
-        data: i,
-        error: function(e) {clearTimeout(n);},
-        success: function(i) {1 === i.status && (t.find('.collections').append(i.data.collections), e.modal.setPosition());},
-        complete: function() {t.find('.modalStep').removeClass('active loading'), clearTimeout(n);}
-      });
-    },
-    resendConfirmEmail: function(t, i) {
-      var n = setTimeout(function() {t.text('').addClass('disabled isLoader loading'), new e.loader(t, 2);}, e.component.loadDelay);
-      $.ajax({
-        url: '/resource/',
-        type: 'POST',
-        dataType: 'json',
-        data: { user: 1, resend_email: 1, request_token: e.config.requestToken },
-        error: function(t) {e.analytics.trackGAEvent(i, 'error', t.responseText);},
-        success: function(r) {
-          var o = t.parents('.confirmParent').find('p');
-          clearTimeout(n), 1 === r.status ? (e.analytics.trackGAEvent(i, 'success'), o.html(r.message), t.hide()) : (e.analytics.trackGAEvent(i, 'failed', r.errors), r.errors.application && (o.html(r.errors.application), t.hide()));
-        },
-        complete: function() {e.setButtonRateLimit(function() {t.removeClass('disabled');});}
-      });
-    }
-  };
 }(App), function(e, t) {
   function i(t, i) {
     var r, o, s, a = t.nodeName.toLowerCase();
