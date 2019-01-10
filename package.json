@@ -1,0 +1,23 @@
+{
+  "name": "rubbl-autocomplete",
+  "version": "1.0.0",
+  "description": "rubbl-autocomplete",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ssenkus/rubbl-autocomplete.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ssenkus/rubbl-autocomplete/issues"
+  },
+  "homepage": "https://github.com/ssenkus/rubbl-autocomplete#readme",
+  "dependencies": {
+    "express": "^4.16.4"
+  }
+}

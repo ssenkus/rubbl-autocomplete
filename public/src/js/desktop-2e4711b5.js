@@ -4006,11 +4006,11 @@
     function(e) {
       var t = e.config.gaAccountNumber, i = { VISITOR: 1, SESSION: 2, PAGE: 3 }, n = function() {
         var e = document.createElement('script');
-        window._gaq = window._gaq || [], e.type = 'text/javascript', e.async = !0, e.src = 'https://ssl.google-analytics.com/ga.js', (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(e);
+        window._gaq = window._gaq || [], e.type = 'text/javascript', e.async = !0, e.src = '', (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(e);
       }, r = function(i) {
         var n = e.config.BASE_URL.replace('https://', '');
         window._gaq.push(['_setAccount', t]), !0 === e.config.DEBUG && (n = 'none'), window._gaq.push(['_setDomainName', n]), window._gaq.push(i);
-      }, o = function(e) {e = e ? 'logged in' : 'logged out', window._gaq.push(['_setCustomVar', 1, 'is_logged_in', e, i.SESSION]);}, s = function() {
+      }, o = function(e) {return; e = e ? 'logged in' : 'logged out', window._gaq.push(['_setCustomVar', 1, 'is_logged_in', e, i.SESSION]);}, s = function() {
         var t = window.innerWidth || document.body.clientWidth, i = window.innerHeight || document.body.clientHeight;
         t = 100 * Math.round(t / 100), i = 100 * Math.round(i / 100), e.analytics.trackGAEvent('Viewport', 'Size', t + 'x' + i), e.analytics.trackGAEvent('Viewport', 'Width', t + 'x' + i, t), e.analytics.trackGAEvent('Viewport', 'Height', t + 'x' + i, i);
       }, a = function() {
@@ -4031,7 +4031,7 @@
         }, trackGAPageview: function(t, n) {
           var o = window.location.pathname, s = e.analytics.group.SUBGROUP, a = e.analytics.group.PAGE, c = e.analytics.group.INDEX;
           t && (s = (t = l(t)).SUBGROUP, a = t.PAGE, c = t.INDEX), n && (o += n), r(['_setCustomVar', 2, 'page_name', a, i.PAGE]), r(['_setPageGroup', c, s]), r(['_trackPageview', e.analytics.getTrackGAPageviewUrl(o, window.location.search)]);
-        }, trackGAEvent: function(e, t, i, n) {r(['_trackEvent', e, t, i, n]);}, setReferringModal: function() {return Modal.primaryModal ? Modal.primaryModal.toLowerCase() + '_modal' : 'page';}
+        }, trackGAEvent: function(e, t, i, n) { return; r(['_trackEvent', e, t, i, n]);}, setReferringModal: function() {return Modal.primaryModal ? Modal.primaryModal.toLowerCase() + '_modal' : 'page';}
       };
     }(App),
     function(e) {
@@ -4096,11 +4096,12 @@
                     type: 'POST',
                     data: { search_suggestions: 1, query: encodeURIComponent(r), request_token: e.config.requestToken },
                     dataType: 'json',
-                    error: function(t) {e.analytics.trackGAEvent(n, 'error', t.responseText);},
+                    error: function(t) { e.analytics.trackGAEvent(n, 'error', t.responseText);},
                     success: function(t) {
                       if (1 === t.status) {
                         for (var o = t.suggestions, s = o.length, a = '', l = r, c = r.length, d = 0; d < s; d += 1) {
                           var u = o[d], p = '<b>' + u.substr(0, c) + '</b>' + u.substr(c);
+                          if (u.indexOf(l) !== 0) continue;
                           a += '<li class="suggestedTerm"><a><span class="suggestedTermName" data-query="' + R(JSON.stringify({
                             entered_query: l,
                             selected_query: u,
