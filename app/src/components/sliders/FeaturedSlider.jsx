@@ -1,0 +1,41 @@
+import Slider from 'react-slick';
+import React, { Component } from 'react';
+
+export default class FeaturedSlider extends Component {
+  render() {
+    const settings = {
+      dots: false,
+      infinite: true,
+      speed: 500,
+      slidesToShow: 3,
+      slidesToScroll: 1,
+
+      className: "center",
+      centerMode: true,
+      centerPadding: "60px",
+    };
+
+    return (
+        <div>
+          <Slider {...settings}>
+            <div>
+              <img src="https://via.placeholder.com/756x350/AA0000/FFFFFF"
+                   width="756" height="350"/>
+            </div>
+            <div>
+              <img src="https://via.placeholder.com/756x350/AA7700/FFFFFF"
+                   width="756" height="350"/>
+            </div>
+            <div>
+              <img src="https://via.placeholder.com/756x350/777700/FFFFFF"
+                   width="756" height="350"/>
+            </div>
+            <div >
+              <img src="https://via.placeholder.com/756x350/FF0000/FFFFFF"
+                   width="756" height="350"/>
+            </div>
+          </Slider>
+        </div>
+    );
+  }
+}
