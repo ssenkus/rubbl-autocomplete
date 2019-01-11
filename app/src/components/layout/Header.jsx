@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import SearchForm from '../forms/SearchForm';
 
 export default class Header extends Component {
   render() {
@@ -11,6 +12,7 @@ export default class Header extends Component {
               </a>
             </div>
           </div>
+          <SearchForm/>
         </div>
     );
   }
