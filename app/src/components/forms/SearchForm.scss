@@ -1,55 +1,121 @@
-.searchForm__control {
+.Header {
+  height: 78px;
+  z-index: 999999;
+
+  .headerBar {
+    padding: 6px 0;
+    position: relative;
+    z-index: 2;
+    margin: 0 auto
+  }
+
+  .headerContainer {
+    position: relative;
+    z-index: 10
+  }
+
+  .logoContainer {
+    height: 31px;
+    width: 100%;
+    visibility: visible;
+    opacity: 1
+  }
+
+  .logo {
+    margin: 9px 0 0 -58px;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    z-index: 2;
+    color: #000000;
+    background-position: 0 -32px;
+    background-repeat: no-repeat;
+    height: 15px;
+    font-weight: bold;
+    font-size: 15px;
+  }
+
+  .searchLogoContainer {
+    opacity: 0;
+    -webkit-transition: opacity 160ms ease-out;
+    transition: opacity 160ms ease-out;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 5px;
+    z-index: 2
+  }
+
+  .searchForm {
+    overflow: hidden
+  }
+
+  .searchForm__control {
     z-index: 9999;
     font-size: 15px;
     font-weight: bold;
-}
+  }
 
+  .searchForm {
+    z-index: 9999;
+  }
 
-//.test {
-//  z-index: 9999;
-//  font-size: 15px;
-//  font-weight: bold;
-//  > div {
-//    //background-color: #e8e8e8;
-//    //color: #333333;
-//  }
-//}
+  .suggestTitle {
+    background-color: #fff !important;
+    z-index: 99999;
+    width: 100%;
+    padding-top: 5px;
+    padding-bottom: 10px;
+    padding-left: 250px;
+  }
 
-.searchForm {
-  z-index: 9999;
-}
+  // TODO: find option in react-select to remove this indicator
+  .searchForm__indicator.searchForm__dropdown-indicator {
+    display: none;
+  }
 
-.suggestTitle {
-  background-color: #fff!important;
-  z-index: 99999;
-  width: 100%;
-  height: 100px;
-}
+  .searchForm__control {
+    margin-left: auto;
+    margin-right: auto;
+    width: 1200px;
+  }
 
-.searchForm__control {
-  margin-left: auto;
-  margin-right: auto
-}
+  .searchForm__menu {
+    background-color: transparent !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    margin-top: -8px !important;
+    width: 100%;
+    z-index: 9999 !important;
+    box-sizing: border-box;
+    position: relative !important;
 
-.searchForm__menu {
-  top: 100%;
-  background-color: #fff!important;
-  border-radius: 0!important;
-  box-shadow: none;
-  margin-bottom: 8px;
-  margin-top: 8px;
-  position: absolute;
-  width: 100%;
-  z-index: 9999;
-  box-sizing: border-box;
-}
+  }
 
-.searchForm__menu-list {
-  max-height: 300px;
-  overflow-y: auto;
-  padding-bottom: 4px;
-  padding-top: 4px;
-  position: relative;
-  -webkit-overflow-scrolling: touch;
-  box-sizing: border-box;
+  .searchForm__menu-list {
+    background-color: #fff;
+    max-height: 300px;
+    overflow-y: auto;
+    padding-bottom: 4px;
+    padding-top: 4px;
+    position: relative;
+    -webkit-overflow-scrolling: touch;
+    box-sizing: border-box;
+    padding-left: 240px;
+  }
+
+  .suggestGradient {
+    background: -webkit-gradient(linear, left top, left bottom, from(rgba(255, 255, 255, .99)), color-stop(36%, rgba(255, 255, 255, .624)), color-stop(40%, rgba(255, 255, 255, .58)), color-stop(60%, rgba(255, 255, 255, .37)), color-stop(80%, rgba(255, 255, 255, .15)), to(rgba(255, 255, 255, .01))) !important;
+    background: linear-gradient(to bottom, rgba(255, 255, 255, .99) 0, rgba(255, 255, 255, .624) 36%, rgba(255, 255, 255, .58) 40%, rgba(255, 255, 255, .37) 60%, rgba(255, 255, 255, .15) 80%, rgba(255, 255, 255, .01) 100%) !important;
+    display: block;
+    height: 100px !important;
+    -webkit-transition: all .3s ease-in-out;
+    transition: all .3s ease-in-out;
+    margin-top: -10px;
+  }
+
+  .searchForm__option {
+    background-color: #fff !important;
+  }
+
 }

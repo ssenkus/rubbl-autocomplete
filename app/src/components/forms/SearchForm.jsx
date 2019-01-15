@@ -1,47 +1,29 @@
-import React, { Component, Fragment } from 'react';
-import Select, { components } from 'react-select';
+import React, { Component } from 'react';
+import AsyncSelect from 'react-select/lib/Async';
 import './SearchForm.scss';
+import SearchFormMenu from './SearchFormMenu';
+import SearchFormMenuList from './SearchFormMenuList';
+import SearchFormNoOptionsMessage from './SearchFormNoOptionsMessage';
+import SearchFormOption from './SearchFormOption';
+import SearchFormOptionsFilter from '../../filters/SearchFormOptionsFilter';
 
-function getLength(options) {
-  return options.reduce((acc, curr) => {
-    if (curr.options) return acc + getLength(curr.options);
-    return acc + 1;
-  }, 0);
-};
-
-const Menu = (props) => {
-  const optionsLength = getLength(props.options);
-  console.log('@@@ Menu', optionsLength, props);
-  return (
-      <Fragment>
-        <div className="suggestTitle">Suggested</div>
-        <components.Menu {...props}>
-          {props.children}
-        </components.Menu>
-      </Fragment>
-  );
-};
-
-
-const options = [
-  { value: 'Random', label: 'Random' },
-  { value: 'Real', label: 'Real' },
-  { value: 'Record', label: 'Record' },
-  { value: 'Red', label: 'Red' },
-  { value: 'Report', label: 'Report' }
-];
 
 export default class SearchForm extends Component {
   render() {
     return (
-        <Select options={options}
-                isMulti
-                defaultMenuIsOpen
-                isClearable={false}
-                placeholder={'Start typing to search'}
-                classNamePrefix="searchForm"
-                className="searchForm"
-                components={{ Menu }}
+        <AsyncSelect
+            loadOptions={SearchFormOptionsFilter}
+            isMulti
+            isClearable={false}
+            placeholder={'Start typing to search'}
+            classNamePrefix="searchForm"
+            className="searchForm"
+            components={{
+              Menu: SearchFormMenu,
+              MenuList: SearchFormMenuList,
+              NoOptionsMessage: SearchFormNoOptionsMessage,
+              Option: SearchFormOption
+            }}
         />
     );
   }

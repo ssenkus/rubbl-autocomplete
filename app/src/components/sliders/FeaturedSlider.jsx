@@ -9,7 +9,6 @@ export default class FeaturedSlider extends Component {
       infinite: true,
       slidesToShow: 3,
       slidesToScroll: 1,
-
       className: 'center',
       centerMode: true,
       centerPadding: '60px'
