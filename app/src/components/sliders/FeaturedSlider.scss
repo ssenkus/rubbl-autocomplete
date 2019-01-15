@@ -1,5 +1,5 @@
 .slick-slider {
-  z-index:100;
+  z-index: 100;
 
   .slick-arrow {
     z-index: 101;
@@ -14,6 +14,9 @@
 
     }
 
+    &.slick-hidden {
+      display: none
+    }
   }
 
   &:hover {
@@ -46,7 +49,9 @@
   top: 0;
   left: 0;
   margin-left: auto;
-  margin-right: auto
+  margin-right: auto;
+
+
 }
 
 .slick-track:after, .slick-track:before {
@@ -93,6 +98,3 @@
   border: 1px solid transparent
 }
 
-.slick-arrow.slick-hidden {
-  display: none
-}
